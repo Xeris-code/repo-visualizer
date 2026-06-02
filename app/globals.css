@@ -1,26 +1,96 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --background: #090B14;
+  --background-secondary: #0E1220;
+  --panel: #111827;
+  --card: #0B1326;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --border: #1F2A44;
+  --border-hover: #2C3A5A;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --text-primary: #F8FAFC;
+  --text-secondary: #7F89A7;
+  --text-muted: #6B7693;
+
+  --primary: #7C3AED;
+  --primary-hover: #8B5CF6;
+
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --info: #3B82F6;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+
+  font-family: var(--font-geist-sans), sans-serif;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
+
+.card {
+  background-color: var(--card);
+  border-color: var(--border);
+}
+
+.app {
+  height: 100%;
+  width: 100%;
+}
+
+.noScroll {
+  scrollbar-width: none;
+}
+
+.noScroll::-webkit-scrollbar {
+  display: none;
+}
+
+
+/*
+Background: #090B14
+Secondary Background: #0E1220
+Panel Background: #111827
+Card Background: #131C2E
+
+Border: #1F2A44
+Border Hover: #2C3A5A
+
+Text Primary: #F8FAFC
+Text Secondary: #A8B3CF
+Text Muted: #6B7693
+
+Primary Brand: #7C3AED
+Primary Hover: #8B5CF6
+Primary Glow: rgba(124,58,237,0.35)
+
+Success: #22C55E
+Success Dark: #16A34A
+
+Warning: #F59E0B
+Error: #EF4444
+Info: #3B82F6
+
+Pages Node: #3B82F6
+Components Node: #14B8A6
+Features Node: #10B981
+Libraries Node: #EAB308
+API Node: #F59E0B
+Database Node: #8B5CF6
+External Services Node: #64748B
+
+Architecture Score Gradient:
+#22C55E -> #10B981
+
+Shadow Subtle:
+rgba(255,255,255,0.03)
+
+Glow Purple:
+rgba(124,58,237,0.15)
+
+*/

@@ -1,0 +1,25 @@
+import { en } from "@/i18n/en";
+
+export const languageCodes = ["en"] as const;
+
+type DeepWiden<T> =
+  T extends string
+    ? string
+    : T extends number
+      ? number
+      : T extends boolean
+        ? boolean
+        : T extends readonly (infer U)[]
+          ? Array<DeepWiden<U>>
+          : T extends object
+            ? { -readonly [K in keyof T]: DeepWiden<T[K]> }
+            : T;
+
+export type TranslationSchema = DeepWiden<typeof en>;
+export type AppLanguage = (typeof languageCodes)[number];
+
+export type AppTranslations = TranslationSchema["ui"]["app"]
+export type OverviewTranslations = TranslationSchema["ui"]["overview"]
+export type EmptyStateTranslations = TranslationSchema["ui"]["emptyState"]
+export type ValidationTranslations = TranslationSchema["ui"]["app"]["messages"]["validation"]
+export type GithubValidationTranslations = TranslationSchema["ui"]["app"]["messages"]["validation"]["github"]
