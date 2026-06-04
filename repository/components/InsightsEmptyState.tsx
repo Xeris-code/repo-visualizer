@@ -38,7 +38,7 @@ export function InsightsEmptyState({translations}: InsightsEmptyStateProps) {
         })}
       </div>
 
-      <div className="mt-8 rounded-xl border border-amber-500/10 bg-amber-500/5 p-4">
+      <div className="mt-8 rounded-xl border border-amber-500/10 bg-[#111827] p-4">
         <div className="mb-2 flex items-center gap-2">
           <Lightbulb className="h-4 w-4 text-amber-400" />
 
