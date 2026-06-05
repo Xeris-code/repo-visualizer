@@ -8,7 +8,7 @@ type InsightsEmptyStateProps = {
 
 export function InsightsEmptyState({translations}: InsightsEmptyStateProps) {
   return (
-    <div className="h-full p-5 flex flex-col justify-between overflow-y-auto noScroll rounded-2xl border border-[#1A2550] bg-[#081020]">
+    <div className="h-full p-5 flex flex-col justify-between overflow-y-auto noScroll rounded-2xl  bg-[#081020] select-none">
       <div className="space-y-4 flex flex-col gap-3">
         <h2 className="mb-3 text-lg font-semibold text-white">
             {translations.insights.label} 

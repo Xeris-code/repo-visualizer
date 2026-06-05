@@ -23,3 +23,11 @@ export type OverviewTranslations = TranslationSchema["ui"]["overview"]
 export type EmptyStateTranslations = TranslationSchema["ui"]["emptyState"]
 export type ValidationTranslations = TranslationSchema["ui"]["app"]["messages"]["validation"]
 export type GithubValidationTranslations = TranslationSchema["ui"]["app"]["messages"]["validation"]["github"]
+
+export type GraphTranslations = TranslationSchema["ui"]["graph"]
+export type GraphTranslationsLegend = TranslationSchema["ui"]["graph"]["legend"]
+
+export type StatsTranslations = TranslationSchema["ui"]["stats"]
+export type StatsLanguagesTranslations = TranslationSchema["ui"]["stats"]["languages"]
+export type StatsDirectoriesTranslations = TranslationSchema["ui"]["stats"]["directories"]
+export type StatsFilesTranslations = TranslationSchema["ui"]["stats"]["files"]

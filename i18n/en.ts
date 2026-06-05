@@ -8,13 +8,12 @@ export const en = {
             messages: {
                 validation: {
                     github: {
-                        url: "Incorrect url",
-                        host: "Incorrect host",
-                        owner: "Incorrect owner",
-                        repo: "Incorrect repo",
+                        mainLine: "This doesn't look like a valid GitHub repository URL.",
+                        muted: "Please check the URL and try again.",
+                        fetching: "Fetching repository data...",
                     }
                 }
-            }
+            },
         },
 
         overview: {
@@ -50,12 +49,41 @@ export const en = {
             },
         },
 
+        graph: {
+            title: "Architecture Graph",
+            description: "Visual representation of your codebase structure and connections",
+            legend: {
+                file: "Files",
+                component: "Components",
+                route: "API Routes",
+                library: "Libraries",
+                external: "External"
+            },
+        },
+
+        stats: {
+            languages: {
+                title: "Languages",
+                list: "View all",
+                files: "Total Files",
+            },
+            directories: {
+                title: "Largest Directories",
+                list: "View all",
+            },
+            files: {
+                title: "File Types",
+                list: "View all",
+            },
+        },
+
         emptyState: {
             title: "Analyze your repository architecture",
             description: "Paste a GitHub repository URL to visualize its structure, dependancies, routes, and possible refactor opporunities.",
             link: {
                 placeholder: "https://github.com/owner/repository",
-                submit: "Analyze repo"
+                submit: "Analyze repo",
+                loading: "Analyzing...",
             },
             example: {
                 label: "Example",

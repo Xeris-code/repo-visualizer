@@ -3,11 +3,12 @@ import { AppTranslations } from "@/shared/types"
 import { Search, Settings, Sun } from "lucide-react";
 
 type NavigationBarProps = {
+    isEmpty: boolean;
     translations: {app: AppTranslations};
 }
 
 export function NavigationBar ({
-    translations
+    isEmpty, translations
 }: NavigationBarProps) {
 
     return (
@@ -19,19 +20,21 @@ export function NavigationBar ({
                     width={36}
                     height={36}
                 />
-                <span className="text-[18px] font-semibold">{translations.app.name}</span>
+                <span className="text-[18px] font-semibold select-none">{translations.app.name}</span>
             </div>
-            <div className="flex h-8 self-center w-full max-w-97.5 overflow-hidden rounded-lg border border-white/10 bg-[#050816]">
-                <div className="flex w-8 items-center justify-center border-r border-white/10">
-                <Search className="h-4 w-4 text-[#F4F7FF]" />
+            {!isEmpty &&
+                <div className="flex h-8 self-center w-full max-w-97.5 overflow-hidden rounded-lg border border-white/10 bg-[#050816]">
+                    <div className="flex w-8 items-center justify-center border-r border-white/10">
+                    <Search className="h-4 w-4 text-[#F4F7FF]" />
+                    </div>
+        
+                    <input
+                    type="url"
+                    placeholder={translations.app.search.placeholder}
+                    className="min-w-0 flex-1 bg-transparent px-4 text-[15px] text-[#F4F7FF] outline-none placeholder:text-[#6E7895]"
+                    />
                 </div>
-    
-                <input
-                type="url"
-                placeholder={translations.app.search.placeholder}
-                className="min-w-0 flex-1 bg-transparent px-4 text-[15px] text-[#F4F7FF] outline-none placeholder:text-[#6E7895]"
-                />
-            </div>
+            }
             <div className="flex gap-4 justify-center">
                 <button className="cursor-pointer hover:text-[#A78BFA] hover:scale-[1.09] active:scale-[0.98]">
                     <Settings/>

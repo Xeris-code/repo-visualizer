@@ -1,17 +1,25 @@
-import { GraphBackground } from "./GraphBackground";
+import { GraphTranslations } from "@/shared/types";
+import { ReactFlowProvider } from "@xyflow/react";
+import { GraphModel } from "../types";
+import { ArchitectureCanvasInner } from "./ArchitectureCanvasInner";
+
+
+type ArchitectureCanvasProps = {
+    graph: GraphModel;
+    translations: GraphTranslations
+}
 
 export function ArchitectureCanvas({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="relative h-full rounded-2xl border card">
-      <GraphBackground />
+    graph, 
+    translations,
+}: ArchitectureCanvasProps) {
 
-      <div className="relative z-10 flex h-full items-center justify-center">
-        {children}
-      </div>
-    </section>
-  );
+    return (
+        <ReactFlowProvider>
+            <ArchitectureCanvasInner
+                graph={graph}
+                translations={translations}
+            />
+        </ReactFlowProvider>
+    );
 }

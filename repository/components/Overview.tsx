@@ -1,14 +1,21 @@
 import { OverviewTranslations } from "@/shared/types";
 import { ScoreIndicator } from "@/shared/ui";
-import { Component, Download, Route, FileText, FileX2, Folder, RefreshCw, Share, Library } from "lucide-react";
+import { Component, Download, Route, FileText, RefreshCw, Share, Library } from "lucide-react";
+import { RepoStats } from "../types";
 
 type OverviewProps = {
-    translations: OverviewTranslations
+    stats: RepoStats;
+    translations: OverviewTranslations;
+    handleScan: () => void;
 }
 
-export function Overview({translations}: OverviewProps) {
+export function Overview({
+    stats,
+    translations,
+    handleScan,
+}: OverviewProps) {
   return (
-    <div className="flex flex-col p-3 gap-2">
+    <div className="flex flex-col p-3 gap-2 select-none">
         <div className="flex justify-between items-center">
             <div className="flex flex-col">
                 <span className="text-sm font-semibold text-white">{translations.label}</span>
@@ -17,21 +24,22 @@ export function Overview({translations}: OverviewProps) {
             <div className="flex gap-2">
                 <button
                     type="button"
-                    className="cursor-pointer flex h-7 items-center gap-2 px-4 rounded bg-[#0E1220] border-[#1F2A44] border text-xs font-semibold text-[#F8FAFC]"
+                    className="cursor-pointer flex h-7 items-center gap-2 px-4 rounded bg-[#0E1220] border-[#1F2A44] border text-xs font-semibold text-[#F8FAFC] hover:border-[#A78BFA] hover:text-[#A78BFA] active:scale-[0.98]"
                 >   
                     <Share className="w-4 h-4"/>
                     {translations.buttons.share.label}
                 </button>
                 <button
                     type="button"
-                    className="cursor-pointer flex h-7 items-center gap-2 px-4 rounded bg-[#0E1220] border-[#1F2A44] border text-xs font-semibold text-[#F8FAFC]"
+                    className="cursor-pointer flex h-7 items-center gap-2 px-4 rounded bg-[#0E1220] border-[#1F2A44] border text-xs font-semibold text-[#F8FAFC] hover:border-[#A78BFA] hover:text-[#A78BFA] active:scale-[0.98]"
                 >   
                     <Download className="w-4 h-4"/>
                     {translations.buttons.export.label}
                 </button>
                 <button
                     type="button"
-                    className="cursor-pointer flex h-7 items-center gap-2 px-4 rounded bg-[#6D4AFF] text-xs font-semibold text-[#F8FAFC]"
+                    onClick={handleScan}
+                    className="cursor-pointer flex h-7 items-center gap-2 px-4 rounded bg-[#6D4AFF] text-xs font-semibold text-[#F8FAFC] hover:bg-[#7C5CFF] active:scale-[0.98]"
                 >   
                     <RefreshCw className="w-4 h-4"/>
                     {translations.buttons.scan.label}
@@ -44,7 +52,7 @@ export function Overview({translations}: OverviewProps) {
                     <FileText/>
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-white">2,867</span>
+                    <span className="text-sm font-semibold text-white">{stats.totalFiles}</span>
                     <span className="text-xs leading-relaxed text-[#7F89A7]">{translations.items.file.label}</span>
                 </div>
             </div>
@@ -53,7 +61,7 @@ export function Overview({translations}: OverviewProps) {
                     <Component/>
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-white">512</span>
+                    <span className="text-sm font-semibold text-white">{stats.totalComponents}</span>
                     <span className="text-xs leading-relaxed text-[#7F89A7]">{translations.items.component.label}</span>
                 </div>
             </div>
@@ -62,7 +70,7 @@ export function Overview({translations}: OverviewProps) {
                     <Route/>
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-white">154</span>
+                    <span className="text-sm font-semibold text-white">{stats.totalRoutes}</span>
                     <span className="text-xs leading-relaxed text-[#7F89A7]">{translations.items.route.label}</span>
                 </div>
             </div>
@@ -71,13 +79,13 @@ export function Overview({translations}: OverviewProps) {
                     <Library/>
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-white">78</span>
+                    <span className="text-sm font-semibold text-white">{stats.totalLibraries}</span>
                     <span className="text-xs leading-relaxed text-[#7F89A7]">{translations.items.library.label}</span>
                 </div>
             </div>
             <div className="flex items-center gap-3 p-3 rounded-lg border-[#1F2A44] border bg-[#111827]">
                 <ScoreIndicator
-                    value={62}
+                    value={stats.architectureScore}
                     label={translations.items.score.label}
                 />
             </div>

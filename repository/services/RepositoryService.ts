@@ -1,7 +1,6 @@
-import { GithubValidationTranslations } from "@/shared/types"
 import { GithubRepoParseResult } from "../types"
 
-export function parseGithubRepoUrl (path: string, translations: GithubValidationTranslations): GithubRepoParseResult {
+export function parseGithubRepoUrl (path: string, error: string): GithubRepoParseResult {
     
     try {
         const url = path.startsWith("https://") || path.startsWith("http://")
@@ -18,29 +17,23 @@ export function parseGithubRepoUrl (path: string, translations: GithubValidation
             hostname,
             owner,
             repo,
-            translations
+            error
         )
     }
     catch {
         return {
             success: false,
-            error: translations.url,
+            error: error,
         }
     }
 }
 
-function validateGithubRepo (host: string, owner: string, repo: string, translations: GithubValidationTranslations): GithubRepoParseResult {
+function validateGithubRepo (host: string, owner: string, repo: string, error: string): GithubRepoParseResult {
     if (host === "github.com" || host === "www.github.com") {
-        if (!owner) {
+        if (!owner || !repo) {
             return {
                 success: false,
-                error: translations.owner
-            }
-        }
-        if (!repo) {
-            return {
-                success: false,
-                error: translations.repo
+                error: error
             }
         }
         return {
@@ -55,7 +48,7 @@ function validateGithubRepo (host: string, owner: string, repo: string, translat
     } else {
         return {
             success: false,
-            error: translations.host
+            error: error
         }
     }
 }
