@@ -1,0 +1,129 @@
+(
+    1. Repository summary
+    2. Node selection panel
+    3. Sidebar tree + Sync status
+    4. Real graph generation
+    5. Dependency parser
+
+    6. Loading state components
+    7. Error handling
+    8. Reset button
+
+    9. View all in stats components
+    10. Fullscreen graph
+    11. Search
+
+    12. Status indicator (Analyzed / Loading)
+    13. Stars count
+    14. Settings menu
+    15. Light / Dark mode
+)
+
+1. Repository summary (najväčší impact)
+
+Doplň do analyzeRepository() základné insighty:
+{
+  totalFiles,
+  totalDirectories,
+  biggestDirectory,
+  dominantLanguage,
+}
+
+A vpravo namiesto prázdneho panelu:
+
+Repository Summary
+
+Repository: repo-visualizer
+Files: 287
+Directories: 24
+Main language: TypeScript
+Largest directory: app
+
+Toto je relatívne jednoduché a UI bude pôsobiť "hotovo".
+
+2. Real graph generation
+
+Momentálne máš:
+
+mockGraph
+
+Ďalší veľký krok je:
+
+repoTree -> GraphModel
+
+Začni jednoducho:
+
+app
+components
+lib
+public
+
+ako nodes.
+
+Nemusíš ešte robiť dependency parsing.
+
+Stačí:
+
+repo
+ ├─ app
+ ├─ components
+ ├─ lib
+ └─ public
+
+A už budeš mať graph z reálnych dát.
+
+3. Node selection panel
+
+Ty už máš:
+
+selectedNodeId
+
+Takže keď klikneš node:
+
+onNodeClick
+
+vpravo zobraz:
+
+Name
+Path
+Type
+Size
+Children
+
+Napríklad:
+
+Navbar
+
+Type: File
+Path: app/components/navbar.tsx
+Size: 3.4 KB
+
+To okamžite dá zmysel tomu pravému panelu.
+
+4. Sidebar tree
+
+Keď bude fungovať selection:
+
+app
+ ├─ page.tsx
+ ├─ layout.tsx
+components
+ ├─ navbar.tsx
+ ├─ sidebar.tsx
+
+A klik na item:
+
+selectNode(nodeId)
+
+To sa krásne prepojí s graphom.
+
+5. Potom dependency parser
+
+Až potom by som riešil:
+
+import Navbar from ...
+import Sidebar from ...
+
+a generovanie reálnych edges.
+
+To je prvý moment, keď začne byť aplikácia "smart".

@@ -18,7 +18,9 @@ export function Overview({
     <div className="flex flex-col p-3 gap-2 select-none">
         <div className="flex justify-between items-center">
             <div className="flex flex-col">
-                <span className="text-sm font-semibold text-white">{translations.label}</span>
+                <span className="text-sm font-semibold text-white">
+                    {translations.label}
+                </span>
                 <span className="text-xs leading-relaxed text-[#7F89A7]">{translations.description}</span>
             </div>
             <div className="flex gap-2">

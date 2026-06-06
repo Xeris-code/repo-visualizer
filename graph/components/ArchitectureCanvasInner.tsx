@@ -4,21 +4,25 @@ import { useState } from "react";
 import { GraphBackground } from "./GraphBackground";
 import { GraphLegend } from "./GraphLegend";
 import { GraphToolbar } from "./GraphToolbar";
-import { GraphMinimap } from "./GraphMinimap";
 
-import { MiniMap, MarkerType, ReactFlow, useReactFlow } from "@xyflow/react";
+import { MarkerType, ReactFlow, useReactFlow } from "@xyflow/react";
 import { GraphModel } from "../types";
 import { getEdgeVisual, nodeTypes } from "../utils/nodes";
+import { GraphMinimap } from "./GraphMinimap";
 
 
 type ArchitectureCanvasInnerProps = {
     graph: GraphModel;
-    translations: GraphTranslations
+    selectedNodeId: string | null;
+    translations: GraphTranslations;
+    onNodeSelect: (id: string | null) => void;
 }
 
 export function ArchitectureCanvasInner({
     graph, 
+    selectedNodeId,
     translations,
+    onNodeSelect,
 }: ArchitectureCanvasInnerProps) {
 
     const [zoom, setZoom] = useState<number>(100)
@@ -47,6 +51,7 @@ export function ArchitectureCanvasInner({
         id: node.id,
         type: "repoNode",
         position: node.position,
+        selected: node.id === selectedNodeId,
         data: node,
     }));
 
@@ -95,11 +100,16 @@ export function ArchitectureCanvasInner({
                             nodeTypes={nodeTypes}
                             fitView
                             proOptions={{ hideAttribution: true }}
+                            onNodeClick={(_, node) => {
+                                onNodeSelect(node.id);
+                            }}
+                            onPaneClick={() => {
+                                onNodeSelect(null);
+                            }}
                             onMove={(_, viewport) => {
                                 setZoom(Math.round(viewport.zoom * 100));
                             }}
-                        >
-                        </ReactFlow>
+                        />
                     </div>
                     <GraphLegend translations={translations.legend}/>
                     <GraphMinimap/>

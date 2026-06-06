@@ -3,15 +3,17 @@ import { nodes } from "../utils/nodes";
 import { Handle, Position } from "@xyflow/react";
 
 type GraphNodeProps = {
+    selected: boolean;
     data: GraphNodeModel;
 }
 
-export function GraphNode ({data}: GraphNodeProps) {
+export function GraphNode ({selected, data}: GraphNodeProps) {
 
     const nodeStyle = nodes[data.type]
 
     return (
-        <div className={`flex items-center ${nodeStyle.bg} gap-2 px-4 py-2 rounded ${nodeStyle.border}`}>
+        <div className={`flex items-center ${nodeStyle.bg} ${selected ? `ring-2 ${nodeStyle.glow} shadow-[0_0_20px_rgba(139,92,246,0.4)]` : ""
+} gap-2 px-4 py-2 rounded ${nodeStyle.border}`}>
 
             <Handle id="top-target" type="target" position={Position.Top} className="opacity-0" />
             <Handle id="bottom-target" type="target" position={Position.Bottom} className="opacity-0" />

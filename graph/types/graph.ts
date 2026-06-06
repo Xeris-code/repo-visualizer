@@ -9,20 +9,20 @@ export type GraphNodeType =
 export type GraphNodeModel = {
   id: string;
   type: GraphNodeType;
-
   title: string;
   subtitle?: string;
-
   position: {
     x: number;
     y: number;
   };
-
   metadata?: {
     path?: string;
-    size?: number;
+    extension?: string;
+    size?: string;
     language?: string;
     fileCount?: number;
+    folderCount?: number;
+    children?: string[];
   };
 };
 

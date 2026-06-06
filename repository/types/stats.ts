@@ -1,13 +1,19 @@
 export type RepoStats = {
-  totalFiles: number;
-  totalComponents: number;
-  totalRoutes: number;
-  totalLibraries: number;
-  architectureScore: number;
+    name: string;
+    size: string;
+    totalFiles: number;
+    totalDirectories: number;
+    biggestDirectory: {name: string; size: string; percentage: number;};
+    dominantLanguage: {name: string; percentage: number; color: string};
 
-  languages: LanguageStats;
-  largestDirectories: DirectoryStats;
-  fileTypes: FileStats;
+    totalComponents: number;
+    totalRoutes: number;
+    totalLibraries: number;
+    architectureScore: number;
+
+    languages: LanguageStats;
+    largestDirectories: DirectoryStats;
+    fileTypes: FileStats;
 };
 
 export type LanguageStats = {

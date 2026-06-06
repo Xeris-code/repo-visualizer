@@ -61,6 +61,34 @@ export const en = {
             },
         },
 
+        insights: {
+            noNode: {
+                title: "Repository Summary",
+                repo: "Repository",
+                fileCount: "Files",
+                fileTypes: "File Types",
+                fileTop: "Top File Type",
+                langCount: "Languages",
+                dirCount: "Directories",
+                lang: "Main language",
+                dir: "Largest directory",
+                size: "Size",
+                percentage: "Percentage",
+            },
+            node: {
+                title: "Node Details",
+                file: {
+                    name: "File",
+                    path: "Path",
+                    type: "Type",
+                    size: "Size",
+                    language: "Language",
+                    codeLines: "Lines of code",
+                    modified: "Last modified",
+                }
+            },
+        },
+
         stats: {
             languages: {
                 title: "Languages",

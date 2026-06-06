@@ -6,4 +6,7 @@ export const initialAppState: AppState = {
     repoState: "empty",
     repoView: "empty",
     repoParseResults: null,
+    selectedNodeId: null,
+    repoStats: null,
+    repoGraph: null,
 };

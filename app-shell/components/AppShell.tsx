@@ -8,8 +8,9 @@ import { ArchitectureCanvas, ArchitectureCanvasEmpty } from "@/graph/components"
 import { InsightsEmptyState, Overview, RepositoryEmptyState} from "@/repository/components";
 import { GithubRepo } from "@/repository/types";
 import { mockGraph, mockRepoStats } from "@/app-shell/state/mock";
-import { LargestDirectoriesCard } from "@/repository/components/stats/LargestDirectoriesCard";
 import { RepositoryStatsPanel } from "@/repository/components/stats";
+import { analyzeRepository } from "@/repository/services/analyzeRepository";
+import { Insights } from "@/repository/components/insights";
 
 export function AppShell(){
 
@@ -25,23 +26,45 @@ export function AppShell(){
         dispatch({ type: "SET", target: "repoState", value: "loading" });
         
         await new Promise((resolve) => setTimeout(resolve, 5000))
+        const results = analyzeRepository(repo)
+        dispatch({ type: "LOAD_REPO_STATS", value: (await results).stats })
+        dispatch({ type: "LOAD_REPO_GRAPH", value: (await results).graph })
 
         dispatch({ type: "SET", target: "repoState", value: "ready" });
         dispatch({ type: "SET", target: "repoView", value: "dashboard"})
     }
 
     async function handleScan () {
+        if (!appState.repoParseResults) {
+            return
+        }
 
         dispatch({ type: "SET", target: "repoState", value: "loading" });
         
         await new Promise((resolve) => setTimeout(resolve, 5000))
-        dispatch({ type: "LOAD_PARSE_RESULTS", value: appState.repoParseResults });
+        const results = analyzeRepository(appState.repoParseResults)
+        dispatch({ type: "LOAD_REPO_STATS", value: (await results).stats })
+        dispatch({ type: "LOAD_REPO_GRAPH", value: (await results).graph })
 
         dispatch({ type: "SET", target: "repoState", value: "ready" });
     }
 
     function handleReset () {
         dispatch({ type: "RESET" })
+    }
+
+    const handleNodeClick = (id: string | null) => {
+        dispatch({ type: "SET", target: "selectedNodeId", value: id})
+    }
+
+    function handleSelectedNode () {
+        const node = mockGraph.nodes.find((node) => node.id === appState.selectedNodeId)
+
+        if (node) {
+            return node
+        } else {
+            return null
+        }
     }
 
     let stats
@@ -89,14 +112,19 @@ export function AppShell(){
             }
             break
         case "ready":
-            stats = <RepositoryStatsPanel stats={mockRepoStats} translation={t.ui.stats}/>
-            sidebar = <SideBar label=""/>
-            insights = <div/>
+            if (!appState.repoStats || !appState.repoGraph || !appState.repoParseResults) {
+                return null;
+            }
+            stats = <RepositoryStatsPanel stats={appState.repoStats} translation={t.ui.stats}/>
+            sidebar = <SideBar repo={appState.repoParseResults}/>
+            insights = <Insights node={handleSelectedNode()} translations={t.ui.insights} repo={appState.repoStats}/>
             maincontent= <ArchitectureCanvas
+                selectedNodeId={appState.selectedNodeId}
+                onNodeSelect={handleNodeClick}
                 graph={mockGraph}
                 translations={t.ui.graph}
             />
-            overview = <Overview stats={mockRepoStats} handleScan={handleScan} translations={t.ui.overview}/>
+            overview = <Overview stats={appState.repoStats} handleScan={handleScan} translations={t.ui.overview}/>
             break
         case "error":
             stats = <div/>
