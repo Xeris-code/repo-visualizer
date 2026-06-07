@@ -1,7 +1,7 @@
 export const en = {
     ui: {
         app: {
-            name: "Repo Visualizer",
+            name: "RepoVisualizer",
             search: {
                 placeholder: "Search files, components, routes..."
             },
@@ -11,6 +11,7 @@ export const en = {
                         mainLine: "This doesn't look like a valid GitHub repository URL.",
                         muted: "Please check the URL and try again.",
                         fetching: "Fetching repository data...",
+                        stateError: "Please check the repository URL or try again later."
                     }
                 }
             },
@@ -85,6 +86,15 @@ export const en = {
                     language: "Language",
                     codeLines: "Lines of code",
                     modified: "Last modified",
+                },
+                folder: {
+                    name: "Folder",
+                    path: "Path",
+                    type: "Type",
+                    size: "Size",
+                    files: "Files",
+                    folders: "Folders",
+                    children: "Children",
                 }
             },
         },

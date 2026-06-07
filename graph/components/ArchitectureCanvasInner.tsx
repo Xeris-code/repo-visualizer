@@ -58,7 +58,7 @@ export function ArchitectureCanvasInner({
     const reactFlowEdges = graph.edges.map((edge) => {
 
         const sourceNode = nodeMap.get(edge.source)
-        const visual = getEdgeVisual(edge.type, sourceNode?.type ?? "external")
+        const visual = getEdgeVisual(edge.type, sourceNode?.type ?? "external", edge.visualType)
 
         return {
             id: edge.id,
@@ -66,7 +66,7 @@ export function ArchitectureCanvasInner({
             target: edge.target,
             sourceHandle: edge.sourceHandle,
             targetHandle: edge.targetHandle,
-            type: "smoothstep",
+            type: "step",
             animated: visual.animated,
             label: edge.label,
             style: {

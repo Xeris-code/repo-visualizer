@@ -12,7 +12,7 @@ export const mockGraph: GraphModel = {
         size: "348.4 KB",
         fileCount: 42,
         folderCount: 6,
-        children: ["sidebar", "navbar", "system", "styles"],
+        children: ["sidebar.tsx", "navbar.tsx", "system.tsx", "styles.ts"],
       },
     },
     {

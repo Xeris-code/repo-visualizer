@@ -4,7 +4,8 @@ export type GraphNodeType =
     | "route"
     | "library"
     | "database"
-    | "external";
+    | "external"
+    | "hidden"
 
 export type GraphNodeModel = {
   id: string;
@@ -48,6 +49,7 @@ export type GraphEdgeModel = {
   label?: string;
 
   animated?: boolean;
+  visualType?: GraphNodeType;
 
   metadata?: {
     confidence?: "low" | "medium" | "high";

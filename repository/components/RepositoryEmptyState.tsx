@@ -8,11 +8,12 @@ type RepositoryEmptyStateProps = {
   translations: EmptyStateTranslations;
   validationTranslations: ValidationTranslations;
   status: repoState;
+  errorMessage: string | null;
   onAnalyze: (repo: GithubRepo) => void;
 };
 
 export function RepositoryEmptyState({
-  status, translations, validationTranslations,
+  status, errorMessage, translations, validationTranslations,
   onAnalyze,
 }: RepositoryEmptyStateProps) {
   return (
@@ -30,6 +31,7 @@ export function RepositoryEmptyState({
         
         <RepositoryUrlForm
           status={status}
+          errorStateMessage={{message: errorMessage, muted: validationTranslations.github.stateError}}
           inputLabels={{
             button: translations.link.submit,
             placeholder: translations.link.placeholder,

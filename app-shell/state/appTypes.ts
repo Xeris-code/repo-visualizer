@@ -11,6 +11,7 @@ export type AppState = {
     selectedNodeId: string | null;
     repoStats: RepoStats | null;
     repoGraph: GraphModel | null;
+    errorMessage: string | null;
 }
 
 export type repoState = "empty" | "loading" | "ready" | "error";

@@ -7,7 +7,6 @@ import { translations } from "@/i18n";
 import { ArchitectureCanvas, ArchitectureCanvasEmpty } from "@/graph/components"
 import { InsightsEmptyState, Overview, RepositoryEmptyState} from "@/repository/components";
 import { GithubRepo } from "@/repository/types";
-import { mockGraph, mockRepoStats } from "@/app-shell/state/mock";
 import { RepositoryStatsPanel } from "@/repository/components/stats";
 import { analyzeRepository } from "@/repository/services/analyzeRepository";
 import { Insights } from "@/repository/components/insights";
@@ -21,32 +20,58 @@ export function AppShell(){
 
     const handleAnalyze = async (repo: GithubRepo) => {
 
-        dispatch({ type: "LOAD_PARSE_RESULTS", value: repo });
-        dispatch({ type: "SET", target: "repoView", value: "empty" });
-        dispatch({ type: "SET", target: "repoState", value: "loading" });
-        
-        await new Promise((resolve) => setTimeout(resolve, 5000))
-        const results = analyzeRepository(repo)
-        dispatch({ type: "LOAD_REPO_STATS", value: (await results).stats })
-        dispatch({ type: "LOAD_REPO_GRAPH", value: (await results).graph })
+        try {
+            dispatch({ type: "LOAD_PARSE_RESULTS", value: repo });
+            dispatch({ type: "SET", target: "repoView", value: "empty" });
+            dispatch({ type: "SET", target: "repoState", value: "loading" });
+            
+            const results = await analyzeRepository(repo)
 
-        dispatch({ type: "SET", target: "repoState", value: "ready" });
-        dispatch({ type: "SET", target: "repoView", value: "dashboard"})
+            dispatch({ type: "LOAD_REPO_STATS", value: results.stats })
+            dispatch({ type: "LOAD_REPO_GRAPH", value: results.graph })
+
+            dispatch({ type: "SET", target: "repoState", value: "ready" });
+            dispatch({ type: "SET", target: "repoView", value: "dashboard"})
+
+        } catch (error) {
+            dispatch({
+                type: "SET",
+                target: "errorMessage",
+                value: error instanceof Error
+                    ? error.message
+                    : "Repository could not be analyzed"
+            })
+            dispatch({ type: "SET", target: "repoState", value: "error" });
+            dispatch({ type: "SET", target: "repoView", value: "empty" });
+            
+        }
+        
     }
 
     async function handleScan () {
         if (!appState.repoParseResults) {
             return
         }
+        try {
+            dispatch({ type: "SET", target: "repoState", value: "loading" });
+            
+            const results = analyzeRepository(appState.repoParseResults)
 
-        dispatch({ type: "SET", target: "repoState", value: "loading" });
-        
-        await new Promise((resolve) => setTimeout(resolve, 5000))
-        const results = analyzeRepository(appState.repoParseResults)
-        dispatch({ type: "LOAD_REPO_STATS", value: (await results).stats })
-        dispatch({ type: "LOAD_REPO_GRAPH", value: (await results).graph })
+            dispatch({ type: "LOAD_REPO_STATS", value: (await results).stats })
+            dispatch({ type: "LOAD_REPO_GRAPH", value: (await results).graph })
 
-        dispatch({ type: "SET", target: "repoState", value: "ready" });
+            dispatch({ type: "SET", target: "repoState", value: "ready" });
+        } catch (error) {
+            dispatch({
+                type: "SET",
+                target: "errorMessage",
+                value: error instanceof Error
+                    ? error.message
+                    : "Repository could not be analyzed"
+            })
+            dispatch({ type: "SET", target: "repoState", value: "error" });
+            dispatch({ type: "SET", target: "repoView", value: "empty" });
+        }
     }
 
     function handleReset () {
@@ -58,11 +83,14 @@ export function AppShell(){
     }
 
     function handleSelectedNode () {
-        const node = mockGraph.nodes.find((node) => node.id === appState.selectedNodeId)
+        if (appState.repoGraph) {
+        const node = appState.repoGraph.nodes.find((node) => node.id === appState.selectedNodeId)
 
         if (node) {
             return node
         } else {
+            return null
+        }} else {
             return null
         }
     }
@@ -81,6 +109,7 @@ export function AppShell(){
             maincontent = <ArchitectureCanvasEmpty>
                             <RepositoryEmptyState
                                 status={appState.repoState}
+                                errorMessage={appState.errorMessage}
                                 translations={t.ui.emptyState}
                                 validationTranslations={t.ui.app.messages.validation}
                                 onAnalyze={handleAnalyze}
@@ -96,6 +125,7 @@ export function AppShell(){
                 maincontent= <ArchitectureCanvasEmpty>
                             <RepositoryEmptyState
                                 status={appState.repoState}
+                                errorMessage={appState.errorMessage}
                                 translations={t.ui.emptyState}
                                 validationTranslations={t.ui.app.messages.validation}
                                 onAnalyze={handleAnalyze}
@@ -108,7 +138,7 @@ export function AppShell(){
                 sidebar= <div/>
                 insights = <div/>
                 maincontent= <div/>
-                overview= <Overview stats={mockRepoStats} handleScan={handleScan} translations={t.ui.overview}/>
+                overview= <div/>
             }
             break
         case "ready":
@@ -117,21 +147,31 @@ export function AppShell(){
             }
             stats = <RepositoryStatsPanel stats={appState.repoStats} translation={t.ui.stats}/>
             sidebar = <SideBar repo={appState.repoParseResults}/>
-            insights = <Insights node={handleSelectedNode()} translations={t.ui.insights} repo={appState.repoStats}/>
+            insights = <Insights owner={appState.repoParseResults.owner} repoName={appState.repoParseResults.repo} node={handleSelectedNode()} translations={t.ui.insights} repo={appState.repoStats}/>
             maincontent= <ArchitectureCanvas
                 selectedNodeId={appState.selectedNodeId}
                 onNodeSelect={handleNodeClick}
-                graph={mockGraph}
+                graph={appState.repoGraph}
                 translations={t.ui.graph}
             />
             overview = <Overview stats={appState.repoStats} handleScan={handleScan} translations={t.ui.overview}/>
             break
         case "error":
-            stats = <div/>
-            sidebar= <div/>
-            insights = <div/>
-            maincontent= <div/>
-            overview= <div/>
+            if (appState.repoView === "empty") {
+                stats = <div/>
+                sidebar= null
+                insights = <InsightsEmptyState translations={t.ui.emptyState}/>
+                maincontent= <ArchitectureCanvasEmpty>
+                            <RepositoryEmptyState
+                                status={appState.repoState}
+                                errorMessage={appState.errorMessage}
+                                translations={t.ui.emptyState}
+                                validationTranslations={t.ui.app.messages.validation}
+                                onAnalyze={handleAnalyze}
+                            />
+                        </ArchitectureCanvasEmpty>
+                overview= <div/>
+            }
             break
     }
 

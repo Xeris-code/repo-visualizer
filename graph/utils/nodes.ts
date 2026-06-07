@@ -9,6 +9,7 @@ export const nodes: Record<GraphNodeType, {icon: LucideIcon, color: string, glow
     "route": {icon: Route, color: "#10B981", glow: "ring-[#10B981]", text: "text-emerald-400", border: "border border-emerald-400/50",bg: "bg-emerald-400/10"},
     "database": {icon: Database, color: "#EC4899", glow: "ring-[#EC4899]", text: "text-pink-400", border: "border border-pink-400/50",bg: "bg-pink-400/10"},
     "external": {icon: Pipette, color: "#9CA3AF", glow: "ring-[#9CA3AF]", text: "text-gray-400", border: "border border-gray-400/50",bg: "bg-gray-400/10"},
+    "hidden": {icon: Pipette, color: "#9CA3AF", glow: "ring-[#9CA3AF]", text: "text-gray-400", border: "border border-gray-400/50",bg: "bg-gray-400/10"},
 }
 
 export function repoToGraph(): GraphModel {
@@ -20,10 +21,10 @@ export function repoToGraph(): GraphModel {
 
 export const nodeTypes = { repoNode: GraphNode }
 
-export function getEdgeVisual(edge: GraphEdgeType, sourceNode: GraphNodeType): GraphEdgeVisual {
+export function getEdgeVisual(edge: GraphEdgeType, sourceNode: GraphNodeType, visualType?: GraphNodeType): GraphEdgeVisual {
 
     const edgeStyle = getEdgeStyle(edge)
-    const color = getEdgeColor(sourceNode)
+    const color = getEdgeColor(visualType ?? sourceNode);
 
     return {
         color: color,
@@ -42,7 +43,7 @@ export function getEdgeStyle(type: GraphEdgeType) {
         case "dependency":
             return {
                 animated: false,
-                strokeWidth: 2,
+                strokeWidth: 1,
                 strokeDasharray: undefined,
             };
 

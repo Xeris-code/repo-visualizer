@@ -8,18 +8,19 @@ type RepositoryUrlFormProps = {
     status: "empty" | "loading" | "ready" | "error";
     inputLabels: {button: string, placeholder: string, loading: string};
     exampleLabels: {label: string, placeholder: string};
+    errorStateMessage: {message: string | null, muted: string};
     errorMessage: {message: string, muted: string};
     fetching: string;
     onAnalyze: (repo: GithubRepo) => void;
 }
 
 export function RepositoryUrlForm ({
-    status, inputLabels, exampleLabels, errorMessage, fetching,
+    status, errorStateMessage, inputLabels, exampleLabels, errorMessage, fetching,
     onAnalyze,
 }: RepositoryUrlFormProps) {
 
     const [url, setUrl] = useState<string>("")
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>();
 
     const isLoading = status === "loading";
 
@@ -75,6 +76,17 @@ export function RepositoryUrlForm ({
                     {!isLoading && <ChevronRight className="h-4 w-4"/>}
                 </button>
             </div>
+            {status === "error" &&
+                <div className="mt-4 flex justify-center gap-2 select-none">
+                    <div className="rounded-full w-5 h-5 text-center self-top border-2 border-[#EF4444] text-[12px] text-[#EF4444]">
+                        <span className="flex justify-center">!</span>
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="text-[14px] text-[#EF4444]">{errorStateMessage.message}</span>
+                        <span className="text-[13px] text-[#7F89A7]">{errorStateMessage.muted}</span>
+                    </div>
+                </div>
+            }
             {error
                 ?
                 <div className="mt-4 flex justify-center gap-2 select-none">
@@ -87,20 +99,21 @@ export function RepositoryUrlForm ({
                     </div>
                 </div>
                 : isLoading
-                    ? <div className="mt-6 flex gap-2 justify-center select-none items-center text-[14px] text-[#7F89A7]">
+                    && <div className="mt-6 flex gap-2 justify-center select-none items-center text-[14px] text-[#7F89A7]">
                         <Loader2 className="h-6 w-6 animate-spin text-[#7C3AED]" /> <span>{fetching}</span>
                     </div>
-                    : <div className="mt-6 text-center text-[14px] text-[#7F89A7]">
-                        <span className="select-none">{exampleLabels.label}:{" "}</span>
-                        <button
-                            type="button"
-                            onClick={() => setUrl(exampleLabels.placeholder)}
-                            className="cursor-pointer text-[#8B5CF6] underline-offset-4 transition hover:text-[#A78BFA] hover:underline"
-                        >
-                            {exampleLabels.placeholder}
-                        </button>
-                    </div>
+                    
             }
+            <div className="mt-6 text-center text-[14px] text-[#7F89A7]">
+                <span className="select-none">{exampleLabels.label}:{" "}</span>
+                <button
+                    type="button"
+                    onClick={() => setUrl(exampleLabels.placeholder)}
+                    className="cursor-pointer text-[#8B5CF6] underline-offset-4 transition hover:text-[#A78BFA] hover:underline"
+                >
+                    {exampleLabels.placeholder}
+                </button>
+            </div>
         </>
     )
 }

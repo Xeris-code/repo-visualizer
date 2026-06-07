@@ -7,7 +7,15 @@ export async function fetchRepositoryTree (owner: string, repo: string): Promise
 
 
     if (!response.ok) {
-        throw new Error("Failed to fetch repository tree")
+      if (response.status === 404) {
+        throw new Error("Repository not found or not public.");
+      }
+
+      if (response.status === 403) {
+        throw new Error("GitHub API rate limit reached.")
+      }
+
+      throw new Error("Failed to fetch repository tree")
     }
 
     const data = await response.json()

@@ -74,3 +74,77 @@ export const languageColors: Record<string, string> = {
 
   Other: "#6B7280",
 };
+
+export const extensionToLanguage: Record<string, string> = {
+  // React / Web
+  ts: "TypeScript",
+  tsx: "TypeScript",
+  js: "JavaScript",
+  jsx: "JavaScript",
+  css: "CSS",
+  scss: "SCSS",
+  sass: "Sass",
+  less: "Less",
+  html: "HTML",
+
+  // Backend
+  py: "Python",
+  java: "Java",
+  kt: "Kotlin",
+  scala: "Scala",
+  groovy: "Groovy",
+
+  // .NET
+  cs: "C#",
+  fs: "FSharp",
+  vb: "VisualBasic",
+
+  // Systems
+  c: "C",
+  cpp: "C++",
+  cxx: "C++",
+  cc: "C++",
+  rs: "Rust",
+  go: "Go",
+  zig: "Zig",
+
+  // Mobile
+  swift: "Swift",
+  m: "ObjectiveC",
+  dart: "Dart",
+
+  // Functional
+  hs: "Haskell",
+  ex: "Elixir",
+  exs: "Elixir",
+  erl: "Erlang",
+  clj: "Clojure",
+
+  // Data
+  sql: "SQL",
+  r: "R",
+  mtl: "MATLAB",
+
+  // DevOps
+  sh: "Shell",
+  bash: "Shell",
+  ps1: "PowerShell",
+  dockerfile: "Dockerfile",
+
+  // Config
+  json: "JSON",
+  yaml: "YAML",
+  yml: "YAML",
+  toml: "TOML",
+  xml: "XML",
+
+  // Docs
+  md: "Markdown",
+  mdx: "MDX",
+  adoc: "AsciiDoc",
+
+  // Misc
+  php: "PHP",
+  rb: "Ruby",
+  lua: "Lua",
+};

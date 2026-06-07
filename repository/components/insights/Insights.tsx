@@ -8,13 +8,17 @@ type InsightsProps = {
     translations: InsightsTranslations;
     node: GraphNodeModel | null;
     repo: RepoStats;
+    owner: string;
+    repoName: string;
 }
 
-export function Insights({ translations, node, repo }: InsightsProps) {
+export function Insights({ translations, owner, repoName, node, repo }: InsightsProps) {
   return (
     <aside className="h-full overflow-y-auto rounded-2xl bg-[#081020] p-3 noScroll">
       {node ? (
         <NodeDetailInsights
+          owner={owner}
+          repo={repoName}
           node={node}
           translation={translations.node}
         />
@@ -25,7 +29,6 @@ export function Insights({ translations, node, repo }: InsightsProps) {
             translations={translations.noNode}
           />
         </div>
-        
       )}
     </aside>
   );
