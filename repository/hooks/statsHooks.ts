@@ -1,26 +1,6 @@
 import { LanguageStats, FileStats } from "../types";
 
-export function getTopFiles(
-    files: FileStats,
-    limit: number = 4
-) {
-    const visibleFiles = files.slice(0, limit);
 
-    const otherFiles = files.slice(limit);
-
-    const other = {
-        extension: "Other",
-        count: otherFiles.reduce((sum, file) => sum + file.count, 0),
-        percentage: otherFiles.reduce((sum, file) => sum + file.percentage, 0),
-    };
-
-    const displayFiles =
-        otherFiles.length > 0
-            ? [...visibleFiles, other]
-            : visibleFiles;
-
-    return displayFiles
-}
 
 export function getTopLanguages(
     languages: LanguageStats,
@@ -56,15 +36,3 @@ export function buildConicGradient(languages: LanguageStats) {
         }).join(", ");
 }
 
-export function formatBytes(bytes: number): string {
-    const units = ["B", "KB", "MB", "GB"];
-    let size = bytes;
-    let unit = 0;
-
-    while (size >= 1024 && unit < units.length - 1) {
-        size /= 1024;
-        unit++;
-    }
-
-    return `${Number(size.toFixed(1))} ${units[unit]}`;
-}

@@ -1,6 +1,3 @@
-import { RepositoryTree } from "../types";
-
-
 export async function fetchRepositoryTree (owner: string, repo: string): Promise<RepositoryTree> {
 
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`)
@@ -32,19 +29,4 @@ export async function fetchRepositoryTree (owner: string, repo: string): Promise
         files,
         folders,
     }
-}
-
-export async function fetchRepositoryLanguages(
-  owner: string,
-  repo: string
-) {
-  const response = await fetch(
-    `https://api.github.com/repos/${owner}/${repo}/languages`
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch repository languages");
-  }
-
-  return response.json();
 }

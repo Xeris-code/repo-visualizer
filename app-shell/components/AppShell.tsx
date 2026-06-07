@@ -8,7 +8,7 @@ import { ArchitectureCanvas, ArchitectureCanvasEmpty } from "@/graph/components"
 import { InsightsEmptyState, Overview, RepositoryEmptyState} from "@/repository/components";
 import { GithubRepo } from "@/repository/types";
 import { RepositoryStatsPanel } from "@/repository/components/stats";
-import { analyzeRepository } from "@/repository/services/analyzeRepository";
+import { analyzeRepository } from "@/repository/analysis/analyzeRepository";
 import { Insights } from "@/repository/components/insights";
 
 export function AppShell(){
