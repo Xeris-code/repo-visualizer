@@ -1,23 +1,5 @@
-export function getRootChildren(tree: RepositoryTree) {
-    const topLevelFolders = getTopLevelDirectories(tree.files).map(
-        (folder) => folder.name
-    );
-
-    const rootFiles = tree.files
-        .filter((file) => !file.path.includes("/"))
-        .map((file) => file.path);
-
-    return [...topLevelFolders, ...rootFiles];
-}
-
-export function getRepositorySize(files: GithubTreeItem[]): string {
-    const totalBytes = files.reduce(
-        (sum, file) => sum + (file.size ?? 0),
-        0
-    );
-
-    return formatBytes(totalBytes);
-}
+import { RepositoryTree, DirectoryStats, GithubTreeItem } from "../types";
+import { formatBytes } from "../utils/formatBytes";
 
 export function getTopLevelDirectories (files: GithubTreeItem[]): DirectoryStats {
     const topLevelDirs: Record<string, number> = {};
@@ -48,6 +30,29 @@ export function getTopLevelDirectories (files: GithubTreeItem[]): DirectoryStats
 
     return directories
 }
+
+export function getRootChildren(tree: RepositoryTree) {
+    const topLevelFolders = getTopLevelDirectories(tree.files).map(
+        (folder) => folder.name
+    );
+
+    const rootFiles = tree.files
+        .filter((file) => !file.path.includes("/"))
+        .map((file) => file.path);
+
+    return [...topLevelFolders, ...rootFiles];
+}
+
+export function getRepositorySize(files: GithubTreeItem[]): string {
+    const totalBytes = files.reduce(
+        (sum, file) => sum + (file.size ?? 0),
+        0
+    );
+
+    return formatBytes(totalBytes);
+}
+
+
 
 export function getRecursiveDirectories (files: GithubTreeItem[]): DirectoryStats {
     const directorySizes: Record<string, number> = {};

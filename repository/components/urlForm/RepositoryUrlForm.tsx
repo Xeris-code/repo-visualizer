@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import { ChevronRight, Loader2 } from "lucide-react"
-import { parseGithubRepoUrl } from "../services";
-import { GithubRepo } from "../types";
+import { parseGithubRepoUrl } from "@/repository/services";
+import { GithubRepo } from "@/repository/types";
 
 type RepositoryUrlFormProps = {
     status: "empty" | "loading" | "ready" | "error";

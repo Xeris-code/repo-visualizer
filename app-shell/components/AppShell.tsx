@@ -9,7 +9,7 @@ import { InsightsEmptyState, Overview, RepositoryEmptyState} from "@/repository/
 import { GithubRepo } from "@/repository/types";
 import { RepositoryStatsPanel } from "@/repository/components/stats";
 import { analyzeRepository } from "@/repository/analysis/analyzeRepository";
-import { Insights } from "@/repository/components/insights";
+import { Insights } from "@/insights/components";
 
 export function AppShell(){
 

@@ -1,3 +1,6 @@
+import { LanguageStats } from "../types";
+import { getLanguageColor } from "../utils/languages";
+
 export function getLanguages (languages: JSON): LanguageStats {
     const total = Object.values(languages)
     .reduce((sum, bytes) => sum + bytes, 0);

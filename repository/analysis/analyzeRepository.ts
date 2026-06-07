@@ -1,7 +1,7 @@
-import { GraphEdgeModel, GraphModel, GraphNodeModel } from "@/graph/types";
-import { DirectoryStats, FileStats, GithubRepo, GithubTreeItem, LanguageStats, RepositoryTree, RepoStats } from "../types";
-import { fetchRepositoryLanguages, fetchRepositoryTree } from "../services/githubService";
-import { extensionToLanguage, formatBytes, getLanguageColor } from "../hooks";
+import { GithubRepo } from "../types";
+import { buildRepoStats } from "./buildRepoStats";
+import { buildRepoGraph } from "./buildRepoGraph";
+import { fetchRepositoryTree, fetchRepositoryLanguages } from "../api";
 
 export async function analyzeRepository(repo: GithubRepo) {
   const tree = await fetchRepositoryTree(repo.owner, repo.repo);

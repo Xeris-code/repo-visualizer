@@ -33,3 +33,8 @@ export type FileStats = {
     count: number;
     percentage: number;
 }[]
+
+export type GithubFileDetails = {
+  linesOfCode: number | null;
+  lastModified: string | null;
+};

@@ -1,6 +1,6 @@
 import { GraphTranslations } from "@/shared/types";
 import { ReactFlowProvider } from "@xyflow/react";
-import { GraphModel } from "../types";
+import { GraphModel } from "@/graph/types";
 import { ArchitectureCanvasInner } from "./ArchitectureCanvasInner";
 
 

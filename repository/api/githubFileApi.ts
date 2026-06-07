@@ -1,3 +1,5 @@
+import { GithubFileDetails, GithubContentResponse, GithubCommitResponse } from "../types";
+
 export async function fetchGithubFileDetails(
     owner: string,
     repo: string,
@@ -14,7 +16,7 @@ export async function fetchGithubFileDetails(
     };
 }
 
-async function fetchLinesOfCode(
+export async function fetchLinesOfCode(
     owner: string,
     repo: string,
     path: string

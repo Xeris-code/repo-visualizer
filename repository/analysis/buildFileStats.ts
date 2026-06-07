@@ -1,3 +1,5 @@
+import { FileStats, GithubTreeItem } from "../types"
+
 export function getFileTypes (files: GithubTreeItem[]): FileStats {
 
     const totalFiles = files.length

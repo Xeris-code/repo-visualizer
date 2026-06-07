@@ -1,4 +1,4 @@
-import { getTopFiles } from "@/repository/hooks";
+import { getTopFiles } from "@/repository/analysis";
 import { StatsFilesTranslations } from "@/shared/types";
 import { File } from "lucide-react";
 

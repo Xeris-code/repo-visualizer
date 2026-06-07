@@ -1,3 +1,5 @@
+import { RepositoryTree } from "../types";
+
 export async function fetchRepositoryTree (owner: string, repo: string): Promise<RepositoryTree> {
 
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`)

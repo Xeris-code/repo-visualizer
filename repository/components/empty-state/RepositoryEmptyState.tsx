@@ -1,7 +1,7 @@
 import { Lock, ShieldCheck } from "lucide-react";
 import { EmptyStateTranslations, ValidationTranslations } from "@/shared/types";
-import { RepositoryUrlForm } from "./RepositoryUrlForm";
-import { GithubRepo } from "../types";
+import { RepositoryUrlForm } from "../urlForm/RepositoryUrlForm";
+import { GithubRepo } from "@/repository/types";
 import { repoState } from "@/app-shell";
 
 type RepositoryEmptyStateProps = {

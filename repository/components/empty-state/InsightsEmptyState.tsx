@@ -1,4 +1,4 @@
-import { features } from "@/insights/components";
+import { features } from "@/insights/hooks";
 import { EmptyStateTranslations } from "@/shared/types";
 import { Lightbulb } from "lucide-react";
 

@@ -1,6 +1,4 @@
-import { LanguageStats, FileStats } from "../types";
-
-
+import { LanguageStats } from "../types";
 
 export function getTopLanguages(
     languages: LanguageStats,

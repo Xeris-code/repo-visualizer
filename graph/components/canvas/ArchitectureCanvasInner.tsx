@@ -1,14 +1,13 @@
 import { GraphTranslations } from "@/shared/types";
-
 import { useState } from "react";
-import { GraphBackground } from "./GraphBackground";
-import { GraphLegend } from "./GraphLegend";
-import { GraphToolbar } from "./GraphToolbar";
-
-import { MarkerType, ReactFlow, useReactFlow } from "@xyflow/react";
-import { GraphModel } from "../types";
-import { getEdgeVisual, nodeTypes } from "../utils/nodes";
-import { GraphMinimap } from "./GraphMinimap";
+import { GraphBackground } from "@/graph/components/canvas";
+import { GraphToolbar } from "@/graph/components/toolbar";
+import { GraphLegend } from "@/graph/components/legend";
+import { ReactFlow, useReactFlow } from "@xyflow/react";
+import { GraphModel } from "@/graph/types";
+import { nodeTypes } from "@/graph/styles";
+import { GraphMinimap } from "../minimap";
+import { getReactFlowEdges, getReactFlowNodes } from "@/graph/mappers";
 
 
 type ArchitectureCanvasInnerProps = {
@@ -43,43 +42,9 @@ export function ArchitectureCanvasInner({
         reactFlow.zoomOut({ duration: 300 });
     }
 
-    const nodeMap = new Map(
-        graph.nodes.map((node) => [node.id, node])
-    )
 
-    const reactFlowNodes = graph.nodes.map((node) => ({
-        id: node.id,
-        type: "repoNode",
-        position: node.position,
-        selected: node.id === selectedNodeId,
-        data: node,
-    }));
-
-    const reactFlowEdges = graph.edges.map((edge) => {
-
-        const sourceNode = nodeMap.get(edge.source)
-        const visual = getEdgeVisual(edge.type, sourceNode?.type ?? "external", edge.visualType)
-
-        return {
-            id: edge.id,
-            source: edge.source,
-            target: edge.target,
-            sourceHandle: edge.sourceHandle,
-            targetHandle: edge.targetHandle,
-            type: "step",
-            animated: visual.animated,
-            label: edge.label,
-            style: {
-                stroke: visual.color,
-                strokeWidth: visual.width,
-                strokeDasharray: visual.dashed,
-            },
-            markerEnd: {
-                type: MarkerType.ArrowClosed,
-                color: visual.color,
-            },
-        }
-    });
+    const reactFlowNodes = getReactFlowNodes(graph, selectedNodeId)
+    const reactFlowEdges = getReactFlowEdges(graph)
 
     return (
             <section className="flex flex-col h-full rounded-2xl">

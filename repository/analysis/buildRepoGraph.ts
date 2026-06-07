@@ -1,3 +1,11 @@
+import { RepositoryTree, GithubTreeItem } from "../types";
+import { GraphModel, GraphNodeModel, GraphEdgeModel } from "@/graph/types";
+import { rootX, NODE_WIDTH, NODE_HEIGHT, GAP_X, GAP_Y, foldersPerRow, filesPerRow } from "@/graph/layout/";
+import { isRootFile, getTopLevel, getNameFromPath, getExtension } from "../utils/path";
+import { getRepositorySize, getRootChildren } from "./buildDirectoryStats";
+import { formatBytes } from "../utils/formatBytes";
+import { getLanguageFromPath } from "../utils/languages";
+
 export function buildRepoGraph (tree: RepositoryTree, repoName: string): GraphModel {
 
   const nodes: GraphNodeModel[] = [];
@@ -30,10 +38,10 @@ export function buildRepoGraph (tree: RepositoryTree, repoName: string): GraphMo
     const top = getTopLevel(file.path);
 
     if (!topLevelMap.has(top)) {
-      const isRootFile = isRootFile(file.path)
+      const isRoot = isRootFile(file.path)
 
       topLevelMap.set(top, {
-        type: isRootFile ? "file" : "folder",
+        type: isRoot ? "file" : "folder",
         files: [],
         folders: [],
       });

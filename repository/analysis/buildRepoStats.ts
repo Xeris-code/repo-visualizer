@@ -1,3 +1,9 @@
+import { RepositoryTree, RepoStats } from "../types"
+import { getLanguages } from "./buildLanguageStats"
+import { getTopLevelDirectories } from "./buildDirectoryStats"
+import { getRepositorySize } from "./buildDirectoryStats"
+import { getFileTypes } from "./buildFileStats"
+
 export function buildRepoStats (repoName: string, tree: RepositoryTree, languages: JSON): RepoStats {
 
     const languageList = getLanguages(languages)

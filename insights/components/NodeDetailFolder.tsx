@@ -1,7 +1,7 @@
 import { GraphNodeModel } from "@/graph/types";
 import { capitalizeFirstLetter } from "@/shared/hooks";
 import { InsightsNodeFolderTranslations } from "@/shared/types";
-import { FileText, FolderClosed } from "lucide-react";
+import { FolderClosed } from "lucide-react";
 
 type NodeDetailFolderProps = {
     title: string;

@@ -16,7 +16,7 @@ function GhostIcon({
 }) {
   return (
     <div
-      className={`absolute flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.015] text-white/10 ${className}`}
+      className={`absolute flex h-11 w-11 items-center justify-center rounded-xl border border-white/6 bg-white/1.5 text-white/10 ${className}`}
     >
       <Icon className="h-5 w-5" strokeWidth={1.25} />
     </div>
@@ -27,7 +27,7 @@ export function GraphBackgroundEmpty() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(168,179,207,0.14)_1px,transparent_0)] bg-[length:18px_18px]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(168,179,207,0.14)_1px,transparent_0)] bg-size-[18px_18px]" />
 
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(124,58,237,0.12),transparent_38%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(9,11,20,0.1),rgba(9,11,20,0.65))]" />
