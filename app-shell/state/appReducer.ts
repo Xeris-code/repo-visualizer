@@ -6,6 +6,8 @@ export function appReducer (state: AppState, action: AppAction): AppState {
             return initialAppState
         case "SET":
             return {...state, [action.target]: action.value}
+        case "SET_FULLSCREEN":
+            return {...state, isGraphFullscreen: action.value}
         case "LOAD_PARSE_RESULTS":
             return {...state, repoParseResults: action.value}
         case "LOAD_REPO_GRAPH":

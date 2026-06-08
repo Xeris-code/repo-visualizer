@@ -1,15 +1,17 @@
-import { Expand, Fullscreen, Minus, Plus } from "lucide-react";
+import { Expand, Fullscreen, Minus, Plus, Shrink } from "lucide-react";
 
 type GraphZoomControlsProps = {
     zoom: number;
+    isFullscreen: boolean;
     onZoomIn: () => void;
     onZoomOut: () => void;
     onFitView: () => void;
+    onFullscreen: () => void;
 }
 
 export function GraphZoomControls ({
-    zoom,
-    onZoomIn, onZoomOut, onFitView
+    zoom, isFullscreen,
+    onZoomIn, onZoomOut, onFitView, onFullscreen,
 }: GraphZoomControlsProps) {
 
     return (
@@ -42,9 +44,10 @@ export function GraphZoomControls ({
             </button>
             <button
                 type="button"
+                onClick={onFullscreen}
                 className="cursor-pointer items-center p-1 rounded bg-[#0E1220] border-[#1F2A44] border  hover:border-[#A78BFA] hover:text-[#A78BFA] active:scale-[0.98]"
             >   
-                <Expand className="w-4 h-4"/>
+                {!isFullscreen ? <Expand className="w-4 h-4"/> : <Shrink className="w-4 h-4"/>}
             </button>
         </div>
     )

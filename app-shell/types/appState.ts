@@ -4,6 +4,7 @@ import { AppLanguage } from "@/shared/types/i18n"
 
 export type AppState = {
     lang: AppLanguage;
+    isGraphFullscreen: boolean;
     name: string;
     repoState: repoState;
     repoView: repoView;

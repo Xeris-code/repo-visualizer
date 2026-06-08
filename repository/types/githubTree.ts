@@ -8,3 +8,9 @@ export type RepositoryTree = {
   files: GithubTreeItem[];
   folders: GithubTreeItem[];
 };
+
+export type TopLevelItem = {
+  type: "folder" | "file";
+  files: GithubTreeItem[];
+  folders: GithubTreeItem[];
+};

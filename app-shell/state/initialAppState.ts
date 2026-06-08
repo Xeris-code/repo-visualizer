@@ -2,6 +2,7 @@ import { AppState } from "@/app-shell";
 
 export const initialAppState: AppState = {
     lang: "en",
+    isGraphFullscreen: false,
     name: "Repo",
     repoState: "empty",
     repoView: "empty",

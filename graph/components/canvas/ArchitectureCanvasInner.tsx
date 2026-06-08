@@ -14,14 +14,14 @@ type ArchitectureCanvasInnerProps = {
     graph: GraphModel;
     selectedNodeId: string | null;
     translations: GraphTranslations;
+    isFullscreen: boolean;
     onNodeSelect: (id: string | null) => void;
+    onFullscreen: () => void;
 }
 
 export function ArchitectureCanvasInner({
-    graph, 
-    selectedNodeId,
-    translations,
-    onNodeSelect,
+    graph, selectedNodeId, translations, isFullscreen,
+    onNodeSelect, onFullscreen,
 }: ArchitectureCanvasInnerProps) {
 
     const [zoom, setZoom] = useState<number>(100)
@@ -52,9 +52,11 @@ export function ArchitectureCanvasInner({
                     zoom={zoom}
                     title={translations.title}
                     description={translations.description}
+                    isFullscreen={isFullscreen}
                     onFitView={handleFitView}
                     onZoomIn={handleZoomIn}
                     onZoomOut={handleZoomOut}
+                    onFullscreen={onFullscreen}
                 />
                 <div className="relative min-h-0 flex-1">
                     <GraphBackground/>
@@ -74,6 +76,7 @@ export function ArchitectureCanvasInner({
                             onMove={(_, viewport) => {
                                 setZoom(Math.round(viewport.zoom * 100));
                             }}
+                            nodesConnectable={false}
                         />
                     </div>
                     <GraphLegend translations={translations.legend}/>
