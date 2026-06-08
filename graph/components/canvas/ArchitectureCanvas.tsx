@@ -1,32 +1,24 @@
-import { GraphTranslations } from "@/shared/types";
 import { ReactFlowProvider } from "@xyflow/react";
-import { GraphModel } from "@/graph/types";
 import { ArchitectureCanvasInner } from "./ArchitectureCanvasInner";
+import { useAppState } from "@/app-shell/context";
 
+export function ArchitectureCanvas() {
 
-type ArchitectureCanvasProps = {
-    graph: GraphModel;
-    selectedNodeId: string | null;
-    translations: GraphTranslations;
-    isFullscreen: boolean;
-    onNodeSelect: (id: string | null) => void;
-    onFullscreen: () => void;
-}
+    const { appState, t, actions } = useAppState()
 
-export function ArchitectureCanvas({
-    graph, translations, selectedNodeId, isFullscreen,
-    onNodeSelect, onFullscreen,
-}: ArchitectureCanvasProps) {
+    if (!appState.repoGraph) {
+        return <div/>
+    }
 
     return (
         <ReactFlowProvider>
             <ArchitectureCanvasInner
-                selectedNodeId={selectedNodeId}
-                isFullscreen={isFullscreen}
-                onNodeSelect={onNodeSelect}
-                graph={graph}
-                onFullscreen={onFullscreen}
-                translations={translations}
+                selectedNodeId={appState.selectedNodeId}
+                isFullscreen={appState.isGraphFullscreen}
+                onNodeSelect={actions.handleNodeClick}
+                graph={appState.repoGraph}
+                onFullscreen={actions.toggleFullscreen}
+                translations={t.ui.graph}
             />
         </ReactFlowProvider>
     );

@@ -1,18 +1,21 @@
 "use client";
 
-import { useReducer } from "react";
-import { AppShellVisual } from "@/app-shell/components";
-import { appReducer, initialAppState } from "@/app-shell/state";
-import { translations } from "@/i18n";
+import { AppShellEmpty, AppShellLoading, AppShellError, AppShellReady } from ".";
+import { useAppState } from "../context";
 
 export function AppShell(){
 
-    const [appState, dispatch] = useReducer(appReducer, initialAppState)
-    const t = translations[appState.lang]
+    const { appState } = useAppState()
 
-    return <AppShellVisual
-        appState={appState}
-        translation={t}
-        dispatch={dispatch}
-    />
+    switch (appState.repoState) {
+        case "empty":
+            return <AppShellEmpty/>
+        case "loading":
+            return <AppShellLoading/>
+        case "error":
+            return <AppShellError/>
+        case "ready":
+            return <AppShellReady/>
+    }
+    
 }

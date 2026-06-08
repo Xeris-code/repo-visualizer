@@ -1,15 +1,11 @@
 import Image from "next/image";
-import { AppTranslations } from "@/shared/types"
 import { Search, Settings, Sun } from "lucide-react";
+import { useAppState } from "../context";
 
-type NavigationBarProps = {
-    isEmpty: boolean;
-    translations: {app: AppTranslations};
-}
 
-export function NavigationBar ({
-    isEmpty, translations
-}: NavigationBarProps) {
+export function NavigationBar () {
+
+    const { isEmpty, t } = useAppState()
 
     return (
         <div className="flex justify-between px-4 pt-2">
@@ -20,7 +16,7 @@ export function NavigationBar ({
                     width={36}
                     height={36}
                 />
-                <span className="text-[18px] font-semibold select-none">{translations.app.name}</span>
+                <span className="text-[18px] font-semibold select-none">{t.ui.app.name}</span>
             </div>
             {!isEmpty &&
                 <div className="flex h-8 self-center w-full max-w-97.5 overflow-hidden rounded-lg border border-white/10 bg-[#050816]">
@@ -30,7 +26,7 @@ export function NavigationBar ({
         
                     <input
                     type="url"
-                    placeholder={translations.app.search.placeholder}
+                    placeholder={t.ui.app.search.placeholder}
                     className="min-w-0 flex-1 bg-transparent px-4 text-[15px] text-[#F4F7FF] outline-none placeholder:text-[#6E7895]"
                     />
                 </div>

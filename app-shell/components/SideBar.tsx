@@ -1,22 +1,18 @@
-import { GithubRepo } from "@/repository/types"
+import { useAppState } from "../context"
 
-type SideBarProps = {
-    repo: GithubRepo
-}
+export function SideBar () {
 
-export function SideBar ({
-    repo,
-}: SideBarProps) {
+    const { appState } = useAppState()
 
     return (
         <div className="flex flex-col h-full p-5">
             <div className="flex flex-col">
-                <span className="text-white font-semibold">
-                    {repo.owner}
-                </span>
-                <span className="text-xs text-[#7F89A7]">
-                    {repo.owner}/{repo.repo}
-                </span>
+                {appState.repoParseResults && <span className="text-white font-semibold">
+                    {appState.repoParseResults.owner}
+                </span>}
+                {appState.repoParseResults && <span className="text-xs text-[#7F89A7]">
+                    {appState.repoParseResults.owner}/{appState.repoParseResults.repo}
+                </span>}
             </div>
         </div>
     )

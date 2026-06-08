@@ -1,32 +1,32 @@
-import { GraphNodeModel } from "@/graph/types";
-import { RepoStats } from "@/repository/types";
-import { InsightsTranslations } from "@/shared/types";
 import { NodeDetailInsights } from "./NodeDetailInsights";
 import { RepositorySummaryInsights } from "./RepositorySummaryInsights";
+import { useAppState } from "@/app-shell/context";
 
-type InsightsProps = {
-    translations: InsightsTranslations;
-    node: GraphNodeModel | null;
-    repo: RepoStats;
-    owner: string;
-    repoName: string;
-}
+export function Insights() {
 
-export function Insights({ translations, owner, repoName, node, repo }: InsightsProps) {
+  const { t, appState, actions } = useAppState()
+
+  const node = actions.handleSelectedNode()
+
+
+  if (!appState.repoParseResults || !appState.repoStats) {
+    return <div/>
+  }
+
   return (
     <aside className="h-full overflow-y-auto rounded-2xl bg-[#081020] p-3 noScroll">
       {node ? (
         <NodeDetailInsights
-          owner={owner}
-          repo={repoName}
+          owner={appState.repoParseResults.owner}
+          repo={appState.repoParseResults.repo}
           node={node}
-          translation={translations.node}
+          translation={t.ui.insights.node}
         />
       ) : (
         <div className="flex flex-col gap-2">
           <RepositorySummaryInsights
-            repo={repo}
-            translations={translations.noNode}
+            repo={appState.repoStats}
+            translations={t.ui.insights.noNode}
           />
         </div>
       )}

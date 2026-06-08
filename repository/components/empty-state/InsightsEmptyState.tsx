@@ -1,19 +1,18 @@
+import { useAppState } from "@/app-shell/context";
 import { features } from "@/insights/hooks";
-import { EmptyStateTranslations } from "@/shared/types";
 import { Lightbulb } from "lucide-react";
 
-type InsightsEmptyStateProps = {
-    translations: EmptyStateTranslations
-}
+export function InsightsEmptyState() {
 
-export function InsightsEmptyState({translations}: InsightsEmptyStateProps) {
+  const { t } = useAppState()
+
   return (
     <div className="h-full p-5 flex flex-col justify-between overflow-y-auto noScroll rounded-2xl  bg-[#081020] select-none">
       <div className="space-y-4 flex flex-col gap-3">
         <h2 className="mb-3 text-lg font-semibold text-white">
-            {translations.insights.label} 
+            {t.ui.emptyState.insights.label} 
         </h2>
-        {features(translations).map((feature) => {
+        {features(t.ui.emptyState).map((feature) => {
           const Icon = feature.icon;
 
           return (
@@ -43,12 +42,12 @@ export function InsightsEmptyState({translations}: InsightsEmptyStateProps) {
           <Lightbulb className="h-4 w-4 text-amber-400" />
 
           <span className="text-sm font-semibold text-white">
-            {translations.insights.tip.label}
+            {t.ui.emptyState.insights.tip.label}
           </span>
         </div>
 
         <p className="text-xs leading-relaxed text-[#7F89A7]">
-          {translations.insights.tip.description} ✨
+          {t.ui.emptyState.insights.tip.description} ✨
         </p>
       </div>
     </div>

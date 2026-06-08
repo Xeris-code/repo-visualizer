@@ -1,48 +1,29 @@
 "use client";
 
-import { TranslationSchema } from "@/shared/types";
 import { AppLayout, EmptyWindowLayout } from "../layout";
 import { NavigationBar } from ".";
 import { ArchitectureCanvasEmpty } from "@/graph/components";
 import { RepositoryEmptyState, InsightsEmptyState } from "@/repository/components";
-import { repoState, repoView } from "../types";
-import { GithubRepo } from "@/repository/types";
+import { useAppState } from "../context";
 
-type AppShellErrorProps = {
-    isEmpty: boolean;
-    repoView: repoView;
-    repoState: repoState;
-    errorMessage: string | null;
-    translation: TranslationSchema;
-    handleAnalyze: (repo: GithubRepo) => void;
-};
 
-export function AppShellError ({
-    isEmpty, repoView, repoState, errorMessage, translation,
-    handleAnalyze
-}: AppShellErrorProps) {
-    if (repoView === "empty") {
+export function AppShellError () {
+
+    const { appState } = useAppState()
+
+    if (appState.repoView === "empty") {
         return <AppLayout 
-            navbar={<NavigationBar
-                isEmpty={isEmpty}
-                translations={{app: translation.ui.app}}
-            />}
+            navbar={<NavigationBar/>}
             sidebar={null}
             mainWindow={<EmptyWindowLayout
                 architecture={<ArchitectureCanvasEmpty>
-                    <RepositoryEmptyState
-                        status={repoState}
-                        errorMessage={errorMessage}
-                        translations={translation.ui.emptyState}
-                        validationTranslations={translation.ui.app.messages.validation}
-                        onAnalyze={handleAnalyze}
-                    />
+                    <RepositoryEmptyState/>
                 </ArchitectureCanvasEmpty>}
-                insights={<InsightsEmptyState translations={translation.ui.emptyState}/>}
+                insights={<InsightsEmptyState/>}
             />}
         />
     } 
-    if (repoView === "dashboard") {
+    if (appState.repoView === "dashboard") {
         return <div/>
     }
 }
