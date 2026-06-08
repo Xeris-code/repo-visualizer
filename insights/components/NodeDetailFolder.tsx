@@ -42,11 +42,11 @@ export function NodeDetailFolder({title, node, translation}: NodeDetailFolderPro
                     <span className="w-full text-xs">{node.metadata?.size}</span>
                 </div>
                 <div className="flex">
-                    <span className="w-3/5 select-none text-xs leading-relaxed text-[#7F89A7]">{translation.files}</span>
+                    <span className="w-3/5 select-none text-xs leading-relaxed text-[#7F89A7]">{node.id === "root" ? translation.rootFiles : translation.files}</span>
                     <span className="w-full text-xs">{node.metadata?.fileCount}</span>
                 </div>
                 <div className="flex">
-                    <span className="w-3/5 select-none text-xs leading-relaxed text-[#7F89A7]">{translation.folders}</span>
+                    <span className="w-3/5 select-none text-xs leading-relaxed text-[#7F89A7]">{node.id === "root" ? translation.rootFolders : translation.folders}</span>
                     <span className="w-full text-xs">{node.metadata?.folderCount}</span>
                 </div>
                 <div className="flex">

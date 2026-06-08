@@ -9,11 +9,12 @@ type GraphToolbarProps = {
     onZoomOut: () => void;
     onFitView: () => void;
     onFullscreen: () => void;
+    onUpFolder: () => void;
 }
 
 export function GraphToolbar ({
     zoom, title, description, isFullscreen,
-    onZoomIn, onZoomOut, onFitView, onFullscreen,
+    onZoomIn, onZoomOut, onFitView, onFullscreen, onUpFolder
 }: GraphToolbarProps) {
 
     return (
@@ -29,6 +30,7 @@ export function GraphToolbar ({
                 onZoomIn={onZoomIn}
                 onZoomOut={onZoomOut}
                 onFullscreen={onFullscreen}
+                onUpFolder={onUpFolder}
             />
         </div>
     )

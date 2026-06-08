@@ -3,7 +3,7 @@ import { buildRepoStats } from "./buildRepoStats";
 import { buildRepoGraph } from "./buildRepoGraph";
 import { fetchRepositoryTree, fetchRepositoryLanguages } from "../api";
 
-export async function analyzeRepository(repo: GithubRepo) {
+export async function analyzeRepository(repo: GithubRepo, folderPath: string | null) {
   const tree = await fetchRepositoryTree(repo.owner, repo.repo);
   const languages = await fetchRepositoryLanguages(repo.owner, repo.repo)
 
@@ -12,7 +12,7 @@ export async function analyzeRepository(repo: GithubRepo) {
   return {
     tree,
     stats: buildRepoStats(repo.repo, tree, languages),
-    graph: buildRepoGraph(tree, repo.repo),
+    graph: buildRepoGraph(tree, repo.repo, folderPath),
   };
 }
 

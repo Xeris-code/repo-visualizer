@@ -11,7 +11,7 @@ import { useAppState } from "../context";
 
 export function AppShellLoading () {
 
-    const { appState, t } = useAppState()
+    const { appState, t, repoGraph } = useAppState()
 
     if (appState.repoView === "empty") {
         return <AppLayout 
@@ -26,7 +26,7 @@ export function AppShellLoading () {
         />
     }
     if (appState.repoView === "dashboard") {
-        if (!appState.repoStats || !appState.repoGraph || !appState.repoParseResults) {
+        if (!appState.repoStats || !repoGraph || !appState.repoParseResults) {
             return <div/>;
         }
         return (

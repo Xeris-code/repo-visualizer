@@ -9,6 +9,7 @@ export const initialAppState: AppState = {
     repoParseResults: null,
     selectedNodeId: null,
     repoStats: null,
-    repoGraph: null,
+    repoTree: null,
     errorMessage: null,
+    currentGraphPath: null,
 };

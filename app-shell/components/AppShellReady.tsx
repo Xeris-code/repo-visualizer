@@ -10,9 +10,9 @@ import { useAppState } from "../context";
 
 export function AppShellReady () {
 
-    const { appState } = useAppState()
+    const { appState, repoGraph } = useAppState()
 
-    if (!appState.repoStats || !appState.repoGraph || !appState.repoParseResults) {
+    if (!appState.repoStats || !repoGraph || !appState.repoParseResults) {
         return <div/>;
     }
     if (appState.isGraphFullscreen) {

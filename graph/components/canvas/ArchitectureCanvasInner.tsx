@@ -1,5 +1,5 @@
 import { GraphTranslations } from "@/shared/types";
-import { useState } from "react";
+import { act, useState } from "react";
 import { GraphBackground } from "@/graph/components/canvas";
 import { GraphToolbar } from "@/graph/components/toolbar";
 import { GraphLegend } from "@/graph/components/legend";
@@ -8,6 +8,7 @@ import { GraphModel } from "@/graph/types";
 import { nodeTypes } from "@/graph/styles";
 import { GraphMinimap } from "../minimap";
 import { getReactFlowEdges, getReactFlowNodes } from "@/graph/mappers";
+import { useAppState } from "@/app-shell/context";
 
 
 type ArchitectureCanvasInnerProps = {
@@ -15,14 +16,14 @@ type ArchitectureCanvasInnerProps = {
     selectedNodeId: string | null;
     translations: GraphTranslations;
     isFullscreen: boolean;
-    onNodeSelect: (id: string | null) => void;
-    onFullscreen: () => void;
+    currentGraphPath: string | null;
 }
 
 export function ArchitectureCanvasInner({
-    graph, selectedNodeId, translations, isFullscreen,
-    onNodeSelect, onFullscreen,
+    graph, selectedNodeId, translations, isFullscreen, currentGraphPath
 }: ArchitectureCanvasInnerProps) {
+
+    const { actions } = useAppState()
 
     const [zoom, setZoom] = useState<number>(100)
     const reactFlow = useReactFlow();
@@ -56,7 +57,8 @@ export function ArchitectureCanvasInner({
                     onFitView={handleFitView}
                     onZoomIn={handleZoomIn}
                     onZoomOut={handleZoomOut}
-                    onFullscreen={onFullscreen}
+                    onFullscreen={actions.toggleFullscreen}
+                    onUpFolder={actions.goUpFolder}
                 />
                 <div className="relative min-h-0 flex-1">
                     <GraphBackground/>
@@ -68,10 +70,24 @@ export function ArchitectureCanvasInner({
                             fitView
                             proOptions={{ hideAttribution: true }}
                             onNodeClick={(_, node) => {
-                                onNodeSelect(node.id);
+                                actions.handleNodeClick(node.id);
+                            }}
+                            onNodeDoubleClick={(_, node) => {
+                                const graphNode = node.data;
+
+                                if (graphNode.type !== "folder" || !graphNode.metadata?.path) {
+                                    return
+                                }
+
+                                if (graphNode.id === currentGraphPath && graphNode.id !== "root") {
+                                    actions.goUpFolder();
+                                    return
+                                }
+                                
+                                actions.handleNodeDoubleClick(graphNode.metadata.path)
                             }}
                             onPaneClick={() => {
-                                onNodeSelect(null);
+                                actions.handleNodeClick(null);
                             }}
                             onMove={(_, viewport) => {
                                 setZoom(Math.round(viewport.zoom * 100));

@@ -97,7 +97,9 @@ export const en = {
                     type: "Type",
                     size: "Size",
                     files: "Files",
+                    rootFiles: "Total Files",
                     folders: "Folders",
+                    rootFolders: "Total Folders",
                     children: "Children",
                 }
             },

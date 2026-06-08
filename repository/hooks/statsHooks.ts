@@ -22,6 +22,7 @@ export function getTopLanguages(
     return displayLanguages
 }
 
+
 export function buildConicGradient(languages: LanguageStats) {
     let start = 0;
 

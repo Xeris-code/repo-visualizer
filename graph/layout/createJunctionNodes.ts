@@ -34,12 +34,13 @@ export function createFileJunctionNode(
 }
 
 export function createRootToJunctionEdge(
+  sourceId: string,
   junctionId: string,
   visualType: GraphNodeType
 ): GraphEdgeModel {
   return {
-    id: `root-${junctionId}`,
-    source: "root",
+    id: `${sourceId}-${junctionId}`,
+    source: sourceId,
     target: junctionId,
     sourceHandle: "bottom-source",
     targetHandle: "top-target",

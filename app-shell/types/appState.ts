@@ -1,5 +1,4 @@
-import { GraphModel } from "@/graph/types";
-import { GithubRepo, RepoStats } from "@/repository/types";
+import { GithubRepo, RepoStats, RepositoryTree } from "@/repository/types";
 import { AppLanguage } from "@/shared/types/i18n"
 
 export type AppState = {
@@ -11,8 +10,9 @@ export type AppState = {
     repoParseResults: GithubRepo | null;
     selectedNodeId: string | null;
     repoStats: RepoStats | null;
-    repoGraph: GraphModel | null;
+    repoTree: RepositoryTree | null;
     errorMessage: string | null;
+    currentGraphPath: string | null;
 }
 
 export type repoState = "empty" | "loading" | "ready" | "error";

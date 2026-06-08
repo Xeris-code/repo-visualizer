@@ -20,7 +20,7 @@ import {
   createJunctionToNodeEdge,
   createRootToJunctionEdge,
 } from "./createJunctionNodes";
-import { getRootChildren, sumFilesSize } from "@/repository/analysis";
+import { getDirectFolderStats, getRootChildren, sumFilesSize } from "@/repository/analysis";
 
 
 
@@ -38,11 +38,12 @@ export function buildTopLevelGraphLayout(
         subtitle: "Repository root",
         position: createRootPosition(),
         metadata: {
-        path: repoName,
-        size: formatBytes(sumFilesSize(tree.files)),
-        fileCount: tree.files.length,
-        folderCount: tree.folders.length,
-        children: getRootChildren(tree),
+            path: repoName,
+            size: formatBytes(sumFilesSize(tree.files)),
+            fileCount: tree.files.length,
+            folderCount: tree.folders.length,
+            children: getRootChildren(tree),
+            isGraphRoot: true,
         },
     });
 
@@ -59,13 +60,16 @@ export function buildTopLevelGraphLayout(
         const junctionId = `junction-folders-${row}`;
 
         if (!createdFolderJunctions.has(junctionId)) {
-        createdFolderJunctions.add(junctionId);
+            createdFolderJunctions.add(junctionId);
 
-        const junction = createFolderJunctionNode(row);
+            const junction = createFolderJunctionNode(row);
+            
 
-        nodes.push(junction);
-        edges.push(createRootToJunctionEdge(junction.id, "folder"));
+            nodes.push(junction);
+            edges.push(createRootToJunctionEdge("root", junction.id, "folder"));
         }
+
+        const directStats = getDirectFolderStats(name, tree)
 
         nodes.push({
         id: name,
@@ -76,11 +80,9 @@ export function buildTopLevelGraphLayout(
         metadata: {
             path: name,
             size: formatBytes(sumFilesSize(item.files)),
-            fileCount: item.files.length,
-            folderCount: item.folders.length,
-            children: item.files
-            .slice(0, 6)
-            .map((file) => getNameFromPath(file.path)),
+            fileCount: directStats.files,
+            folderCount: directStats.folders,
+            children: directStats.children.slice(0, 8)
         },
         });
 
@@ -99,7 +101,7 @@ export function buildTopLevelGraphLayout(
         const junction = createFileJunctionNode(row, folders.length);
 
         nodes.push(junction);
-        edges.push(createRootToJunctionEdge(junction.id, "folder"));
+        edges.push(createRootToJunctionEdge("root", junction.id, "folder"));
         }
 
         const file = item.files[0];

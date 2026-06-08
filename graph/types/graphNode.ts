@@ -24,5 +24,6 @@ export type GraphNodeModel = {
     fileCount?: number;
     folderCount?: number;
     children?: string[];
+    isGraphRoot?: boolean;
   };
 };

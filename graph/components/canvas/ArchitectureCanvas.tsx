@@ -4,9 +4,9 @@ import { useAppState } from "@/app-shell/context";
 
 export function ArchitectureCanvas() {
 
-    const { appState, t, actions } = useAppState()
+    const { appState, t, repoGraph } = useAppState()
 
-    if (!appState.repoGraph) {
+    if (!repoGraph) {
         return <div/>
     }
 
@@ -15,9 +15,8 @@ export function ArchitectureCanvas() {
             <ArchitectureCanvasInner
                 selectedNodeId={appState.selectedNodeId}
                 isFullscreen={appState.isGraphFullscreen}
-                onNodeSelect={actions.handleNodeClick}
-                graph={appState.repoGraph}
-                onFullscreen={actions.toggleFullscreen}
+                currentGraphPath={appState.currentGraphPath}
+                graph={repoGraph}
                 translations={t.ui.graph}
             />
         </ReactFlowProvider>

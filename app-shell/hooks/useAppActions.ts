@@ -1,8 +1,29 @@
 import { GithubRepo } from "@/repository/types";
 import { analyzeRepository } from "@/repository/analysis";
 import { AppAction, AppState } from "../types";
+import { GraphModel } from "@/graph/types";
+import { getParentPath } from "../state";
 
-export function useAppActions (dispatch: React.Dispatch<AppAction>, appState: AppState) {
+export function useAppActions (dispatch: React.Dispatch<AppAction>, appState: AppState, repoGraph: GraphModel | null ) {
+
+
+    function goUpFolder() {
+        if (!appState.currentGraphPath) {
+            return;
+        }
+
+        const parent = getParentPath(appState.currentGraphPath);
+
+        dispatch({
+            type: "SET",
+            target: "currentGraphPath",
+            value: parent,
+        });
+    }
+
+    const handleNodeDoubleClick = (path: string) => {
+        dispatch({ type: "OPEN_FOLDER", payload: path})
+    }
 
     const handleAnalyze = async (repo: GithubRepo) => {
 
@@ -11,10 +32,10 @@ export function useAppActions (dispatch: React.Dispatch<AppAction>, appState: Ap
             dispatch({ type: "SET", target: "repoView", value: "empty" });
             dispatch({ type: "SET", target: "repoState", value: "loading" });
             
-            const results = await analyzeRepository(repo)
+            const results = await analyzeRepository(repo, appState.currentGraphPath)
 
+            dispatch({ type: "SET_REPO_TREE", value: results.tree })
             dispatch({ type: "LOAD_REPO_STATS", value: results.stats })
-            dispatch({ type: "LOAD_REPO_GRAPH", value: results.graph })
 
             dispatch({ type: "SET", target: "errorMessage", value: null})
 
@@ -43,10 +64,9 @@ export function useAppActions (dispatch: React.Dispatch<AppAction>, appState: Ap
         try {
             dispatch({ type: "SET", target: "repoState", value: "loading" });
             
-            const results = analyzeRepository(appState.repoParseResults)
+            const results = analyzeRepository(appState.repoParseResults, null)
 
             dispatch({ type: "LOAD_REPO_STATS", value: (await results).stats })
-            dispatch({ type: "LOAD_REPO_GRAPH", value: (await results).graph })
 
             dispatch({ type: "SET", target: "errorMessage", value: null})
 
@@ -77,8 +97,8 @@ export function useAppActions (dispatch: React.Dispatch<AppAction>, appState: Ap
     }
 
     function handleSelectedNode () {
-        if (appState.repoGraph) {
-        const node = appState.repoGraph.nodes.find((node) => node.id === appState.selectedNodeId)
+        if (repoGraph) {
+        const node = repoGraph.nodes.find((node) => node.id === appState.selectedNodeId)
 
         if (node) {
             return node
@@ -95,6 +115,8 @@ export function useAppActions (dispatch: React.Dispatch<AppAction>, appState: Ap
         handleNodeClick,
         handleReset,
         handleSelectedNode,
-        toggleFullscreen
+        toggleFullscreen,
+        handleNodeDoubleClick,
+        goUpFolder
     }
 }
