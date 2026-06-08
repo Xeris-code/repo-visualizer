@@ -36,11 +36,13 @@ export function AppShellVisual ({appState, translation, dispatch}: AppShellVisua
         case "loading":
             return <AppShellLoading
                 isEmpty={isEmpty}
-                repoView={appState.repoView}
-                repoState={appState.repoState}
-                errorMessage={appState.errorMessage}
+                appState={appState}
                 translation={translation}
                 handleAnalyze={handleAnalyze}
+                handleScan={handleScan}
+                handleNodeClick={handleNodeClick}
+                handleSelectedNode={handleSelectedNode}
+                toggleFullscreen={toggleFullscreen}
             />
         case "error":
             return <AppShellError

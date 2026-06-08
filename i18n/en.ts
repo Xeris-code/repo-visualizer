@@ -13,6 +13,10 @@ export const en = {
                         fetching: "Fetching repository data...",
                         stateError: "Please check the repository URL or try again later."
                     }
+                },
+                loading: {
+                    scan: "Scanning repository...",
+                    refresh: "Refreshing graph and statistics"
                 }
             },
         },
