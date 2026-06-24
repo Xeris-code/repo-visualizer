@@ -46,7 +46,7 @@ export function NodeDetailFolder({title, node, translation}: NodeDetailFolderPro
                     <span className="w-3/5 select-none text-xs leading-relaxed text-[#7F89A7]">{translation.path}</span>
                     <div className="w-full grid grid-cols-[1fr_20px] items-center justify-between gap-4">
                         <span className="text-xs truncate">{node.metadata?.path}</span>
-                        <button type="button" onClick={handleCopy} className="w-[25px] cursor-pointer hover:text-[#A78BFA]">
+                        <button type="button" onClick={handleCopy} className="w-6.25 cursor-pointer hover:text-[#A78BFA]">
                             <Tooltip label={copied ? "Copied!" : "Copy"}>
                                 {copied ? <Check size={15}/> : <Copy size={15}/>}
                             </Tooltip>

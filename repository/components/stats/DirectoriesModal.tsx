@@ -1,14 +1,13 @@
 "use client"
 
 import { DirectoriesListTranslations } from "@/shared/types";
-import { ChevronLeft, ChevronRight, CodeXml, Download, Folder, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Folder, Search } from "lucide-react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { PerPageSelector } from "./PerPageSelector";
 import { DirectoryStats } from "@/repository/types";
 import { exportToCsv, HighlightText } from "./utils";
 import { usePagination, useSearch } from "./hooks";
-import { formatBytes } from "@/repository/utils";
 import { Tooltip } from "@/shared/ui";
 
 type DirectoriesModalProps = {
@@ -53,7 +52,7 @@ export function DirectoriesModal({ items, translations, onClose }: DirectoriesMo
     }, [onClose]);
     
     return createPortal(
-        <div className="fixed inset-0 z-[999998] flex items-center py-10 justify-center bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-999998 flex items-center py-10 justify-center bg-black/60 backdrop-blur-sm">
             <div className="flex flex-col w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl border border-[#243154] bg-[#07101F] shadow-2xl">
                 <div className="flex justify-between p-5 border-b border-[#243154]">
                     <div className="flex gap-3 items-center select-none">

@@ -33,11 +33,11 @@ export function PerPageSelector({
     }, []);
 
     return(
-        <div ref={ref} className="relative z-[999999]">
+        <div ref={ref} className="relative z-999999">
             <button
                 type="button"
                 onClick={() => setClicked(!clicked)}
-                className="cursor-pointer flex h-7 grid grid-cols-[30px_1fr] gap-x-1 px-1 items-center rounded bg-[#0E1220] border-[#1F2A44] border text-xs font-semibold text-[#F8FAFC] hover:border-[#A78BFA] hover:text-[#A78BFA] active:scale-[0.98]"
+                className="cursor-pointer h-7 grid grid-cols-[30px_1fr] gap-x-1 px-1 items-center rounded bg-[#0E1220] border-[#1F2A44] border text-xs font-semibold text-[#F8FAFC] hover:border-[#A78BFA] hover:text-[#A78BFA] active:scale-[0.98]"
             >   
                 <span>
                     {perPage}
@@ -53,7 +53,7 @@ export function PerPageSelector({
             </button>
 
             {clicked && 
-                <div className="absolute ring-1 ring-[#7c3aed66] bg-[#0B1326] bottom-full left-[50%] -translate-y-2 -translate-x-[50%] rounded-lg px-2">
+                <div className="absolute ring-1 ring-[#7c3aed66] bg-[#0B1326] bottom-full left-[50%] -translate-y-2 translate-x-[-50%] rounded-lg px-2">
                     <div className="flex flex-col gap-2 px-2 py-2">
                         {options.map((item, index) => (
                             <button
