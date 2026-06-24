@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronUp } from "lucide-react";
 
 type PerPageSelectorProps = {
     perPage: number;
