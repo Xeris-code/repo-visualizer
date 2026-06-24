@@ -1,6 +1,8 @@
 import { buildConicGradient, getTopLanguages } from "@/repository/hooks";
 import { LanguageStats } from "@/repository/types";
 import { StatsLanguagesTranslations } from "@/shared/types";
+import { useState } from "react";
+import { LanguagesModal } from "./LanguagesModal";
 
 type LanguagesCardProps = {
     totalFiles: number,
@@ -16,6 +18,8 @@ export function LanguagesCard({
   const displayLanguages = getTopLanguages(languages);
   const gradient = buildConicGradient(displayLanguages);
 
+  const [isModalsOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="flex flex-col rounded border border-[#1A2550] bg-[#081020] px-5 py-3">
       <div className="flex items-center justify-between">
@@ -25,9 +29,10 @@ export function LanguagesCard({
 
         <button
           type="button"
+          onClick={() => setIsModalOpen(true)}
           className="cursor-pointer text-xs text-[#8B5CF6] transition hover:text-[#A78BFA] hover:underline"
         >
-          {translation.list}
+          {`${translation.list} (${languages.length})`}
         </button>
       </div>
 
@@ -61,12 +66,18 @@ export function LanguagesCard({
               </span>
 
               <span className="text-right text-xs text-[#6B7693]">
-                ({lang.percentage}%)
+                ({lang.percentage.toFixed(1)}%)
               </span>
             </div>
           ))}
         </div>
       </div>
+      {isModalsOpen && <LanguagesModal
+        items={languages}
+        translations={translation.listTranslations}  
+        onClose={() => setIsModalOpen(false)}
+      />
+    }
     </div>
   );
 }

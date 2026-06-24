@@ -13,18 +13,22 @@ export type RepoStats = {
 
     languages: LanguageStats;
     largestDirectories: DirectoryStats;
+    allDirectories: DirectoryStats;
     fileTypes: FileStats;
 };
 
 export type LanguageStats = {
     name: string;
+    bytes: number;
     percentage: number;
     color: string;
 }[]
 
 export type DirectoryStats = {
     name: string;
+    path: string;
     size: string;
+    sizeBytes: number;
     percentage: number;
 }[]
 

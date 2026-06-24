@@ -8,7 +8,8 @@ export function getLanguages (languages: JSON): LanguageStats {
     const result = Object.entries(languages).map(
         ([name, bytes]) => ({
         name,
-        percentage: Math.round((bytes / total) * 1000) / 10,
+        bytes,
+        percentage: Math.round((bytes / total) * 10000) / 100,
         color: getLanguageColor(name)
         })
     ).sort((a, b) => b.percentage - a.percentage);;

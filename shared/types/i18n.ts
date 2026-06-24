@@ -37,3 +37,9 @@ export type InsightsNoNodeTranslations = TranslationSchema["ui"]["insights"]["no
 export type InsightsNodeTranslations = TranslationSchema["ui"]["insights"]["node"]
 export type InsightsNodeFileTranslations = TranslationSchema["ui"]["insights"]["node"]["file"]
 export type InsightsNodeFolderTranslations = TranslationSchema["ui"]["insights"]["node"]["folder"]
+
+export type GraphTooltipTranslations = TranslationSchema["ui"]["graph"]["tooltip"]
+
+export type FilesListTranslations = TranslationSchema["ui"]["stats"]["files"]["listTranslations"]
+export type LanguagesListTranslations = TranslationSchema["ui"]["stats"]["languages"]["listTranslations"]
+export type DirectoriesListTranslations = TranslationSchema["ui"]["stats"]["directories"]["listTranslations"]

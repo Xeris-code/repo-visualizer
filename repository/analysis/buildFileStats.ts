@@ -13,7 +13,7 @@ export function getFileTypes (files: GithubTreeItem[]): FileStats {
     const fileStats: FileStats = Object.entries(count).map(([extension, count]) => ({
         extension: `.${extension}`,
         count,
-        percentage: Math.round((count / totalFiles)*100)
+        percentage: Math.round((count / totalFiles) * 10000) / 100
         })).sort((a, b) => b.count - a.count)
 
     return fileStats

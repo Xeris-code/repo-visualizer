@@ -64,6 +64,14 @@ export const en = {
                 library: "Libraries",
                 external: "External"
             },
+            tooltip: {
+                outOfFolder: "Move up a node",
+                zoomOut: "Zoom out",
+                zoomIn: "Zoom in",
+                fitView: "Fit View",
+                maximize: "Maximize",
+                minimaze: "Minimaze",
+            },
         },
 
         insights: {
@@ -101,6 +109,7 @@ export const en = {
                     folders: "Folders",
                     rootFolders: "Total Folders",
                     children: "Children",
+                    childrenList: "View all"
                 }
             },
         },
@@ -110,14 +119,55 @@ export const en = {
                 title: "Languages",
                 list: "View all",
                 files: "Total Files",
+                listTranslations: {
+                    title: "Repository Languages",
+                    description: "Breakdown of all languages used in your repository.",
+                    badge: "languages",
+                    search: "Search languages...",
+                    type: "Language",
+                    bytes: "Bytes",
+                    percentage: "Percentage",
+                    distribution: "Distribution",
+                    export: "Export",
+                    showNote: "Showing {start} to {end} of {count} results",
+                    perPage: "per page"
+
+                }
             },
             directories: {
                 title: "Largest Directories",
                 list: "View all",
+                listTranslations: {
+                    title: "All Directories",
+                    description: "Explore the largest directories in your repository.",
+                    badge: "folders",
+                    search: "Search directories...",
+                    type: "Directory",
+                    path: "Path",
+                    size: "Size",
+                    percentage: "Percentage",
+                    distribution: "Distribution",
+                    export: "Export",
+                    showNote: "Showing {start} to {end} of {count} results",
+                    perPage: "per page"
+                }
             },
             files: {
                 title: "File Types",
                 list: "View all",
+                listTranslations: {
+                    title: "All File Types",
+                    description: "Breakdown of all file types in your repository.",
+                    badge: "types",
+                    search: "Search file types...",
+                    type: "File Type",
+                    count: "Count",
+                    percentage: "Percentage",
+                    distribution: "Distribution",
+                    export: "Export",
+                    showNote: "Showing {start} to {end} of {count} results",
+                    perPage: "per page"
+                }
             },
         },
 

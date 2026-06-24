@@ -1,3 +1,4 @@
+import { GraphTooltipTranslations } from "@/shared/types";
 import { GraphZoomControls } from "./GraphZoomControls";
 
 type GraphToolbarProps = {
@@ -5,6 +6,7 @@ type GraphToolbarProps = {
     title: string;
     description: string;
     isFullscreen: boolean;
+    translation: GraphTooltipTranslations;
     onZoomIn: () => void;
     onZoomOut: () => void;
     onFitView: () => void;
@@ -13,7 +15,7 @@ type GraphToolbarProps = {
 }
 
 export function GraphToolbar ({
-    zoom, title, description, isFullscreen,
+    zoom, title, description, isFullscreen, translation,
     onZoomIn, onZoomOut, onFitView, onFullscreen, onUpFolder
 }: GraphToolbarProps) {
 
@@ -26,6 +28,7 @@ export function GraphToolbar ({
             <GraphZoomControls
                 zoom={zoom}
                 isFullscreen={isFullscreen}
+                translation={translation}
                 onFitView={onFitView}
                 onZoomIn={onZoomIn}
                 onZoomOut={onZoomOut}

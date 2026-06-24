@@ -1,5 +1,5 @@
 import { GraphTranslations } from "@/shared/types";
-import { act, useState } from "react";
+import { useState } from "react";
 import { GraphBackground } from "@/graph/components/canvas";
 import { GraphToolbar } from "@/graph/components/toolbar";
 import { GraphLegend } from "@/graph/components/legend";
@@ -54,6 +54,7 @@ export function ArchitectureCanvasInner({
                     title={translations.title}
                     description={translations.description}
                     isFullscreen={isFullscreen}
+                    translation={translations.tooltip}
                     onFitView={handleFitView}
                     onZoomIn={handleZoomIn}
                     onZoomOut={handleZoomOut}
@@ -96,7 +97,7 @@ export function ArchitectureCanvasInner({
                         />
                     </div>
                     <GraphLegend translations={translations.legend}/>
-                    <GraphMinimap/>
+                    {/*<GraphMinimap/>*/}
                 </div>
             </section>
     );

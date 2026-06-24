@@ -2,43 +2,22 @@ import { DirectoryStats, GithubTreeItem, RepositoryTree } from "../types";
 import { formatBytes } from "../utils/formatBytes";
 import { getTopLevel, getNameFromPath } from "../utils";
 
-export function getTopLevelDirectories (files: GithubTreeItem[]): DirectoryStats {
-    const topLevelDirs: Record<string, number> = {};
-
-    files.forEach((file) => {
-        const parts = file.path.split("/");
-
-        if (parts.length < 2) {
-            return;
-        }
-
-        const topDir = parts[0];
-
-        topLevelDirs[topDir] =
-            (topLevelDirs[topDir] ?? 0) + (file.size ?? 0);
-    });
-
-    const largestSize = Math.max(...Object.values(topLevelDirs), 1);
-
-    const directories = Object.entries(topLevelDirs)
-        .map(([name, size]) => ({
-        name,
-        size: formatBytes(size),
-        percentage: Math.round((size / largestSize) * 100),
-        }))
-        .sort((a, b) => b.percentage - a.percentage)
-    .slice(0, 5);
-
-    return directories
-}
-
-export function getRepositorySize(files: GithubTreeItem[]): string {
+export function getRepositorySizeText(files: GithubTreeItem[]): string {
     const totalBytes = files.reduce(
         (sum, file) => sum + (file.size ?? 0),
         0
     );
 
     return formatBytes(totalBytes);
+}
+
+export function getRepositorySizeNumber(files: GithubTreeItem[]): number {
+    const totalBytes = files.reduce(
+        (sum, file) => sum + (file.size ?? 0),
+        0
+    );
+
+    return totalBytes;
 }
 
 export function getRecursiveFiles(
@@ -136,4 +115,44 @@ export function getDirectChildren(tree: RepositoryTree, folderPath: string | nul
     files: files,
     folders: folders,
   };
+}
+
+export function getAllDirectories(
+  folders: GithubTreeItem[],
+  files: GithubTreeItem[],
+  repoSize: number
+): DirectoryStats {
+  const sizeByPath = new Map<string, number>();
+
+  for (const file of files) {
+    const size = file.size ?? 0;
+    const parts = file.path.split("/");
+
+    for (let i = 1; i < parts.length; i++) {
+      const dirPath = parts.slice(0, i).join("/");
+      sizeByPath.set(dirPath, (sizeByPath.get(dirPath) ?? 0) + size);
+    }
+  }
+
+  return folders
+    .map((folder) => {
+      const sizeBytes = sizeByPath.get(folder.path) ?? 0;
+      const segments = folder.path.split("/");
+      const name = segments.at(-1) ?? folder.path;
+      const parentPath =
+        segments.length <= 1 ? "/" : "/" + segments.slice(0, -1).join("/");
+
+      return {
+        name,
+        path: parentPath,
+        fullPath: folder.path,
+        size: formatBytes(sizeBytes),
+        sizeBytes,
+        percentage:
+          repoSize === 0
+            ? 0
+            : Math.round((sizeBytes / repoSize) * 10000) / 100,
+      };
+    })
+    .sort((a, b) => b.sizeBytes - a.sizeBytes);
 }

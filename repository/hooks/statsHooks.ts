@@ -10,6 +10,7 @@ export function getTopLanguages(
 
     const other = {
         name: "Other",
+        bytes: otherLanguages.reduce((sum, file) => sum + file.bytes, 0),
         percentage: otherLanguages.reduce((sum, file) => sum + file.percentage, 0),
         color: "#9CA3AF"
     };

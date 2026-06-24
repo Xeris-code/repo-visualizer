@@ -1,9 +1,12 @@
 import { getTopFiles } from "@/repository/analysis";
 import { StatsFilesTranslations } from "@/shared/types";
 import { File } from "lucide-react";
+import { useState } from "react";
+import { FileTypesModal } from "./FileTypeModal";
+import { FileStats } from "@/repository/types";
 
 type FileTypesCardProps = {
-    files: {extension: string;count: number;percentage: number}[];
+    files: FileStats;
     translation: StatsFilesTranslations;
 }
 
@@ -12,6 +15,7 @@ export function FileTypesCard ({
 }: FileTypesCardProps) {
 
     const displayFiles = getTopFiles(files)
+    const [isModalsOpen, setIsModalOpen] = useState(false);
 
     return (
         <div className="flex flex-col rounded border border-[#1A2550] bg-[#081020] px-5 py-3">
@@ -21,9 +25,10 @@ export function FileTypesCard ({
                 </span>
                 <button
                     type="button"
-                    className="cursor-pointer text-xs text-[#8B5CF6] transition hover:text-[#A78BFA] hover:underline"
+                    onClick={() => setIsModalOpen(true)}
+                    className="cursor-pointer select-none text-xs text-[#8B5CF6] transition hover:text-[#A78BFA] hover:underline"
                 >
-                    {translation.list}
+                    {`${translation.list} (${files.length})`}
                 </button>
             </div>
             <div className="flex flex-col mt-4 gap-2">
@@ -35,11 +40,18 @@ export function FileTypesCard ({
                         </div>
                         <div className="grid grid-cols-2 gap-x-1">
                             <span className="text-[#6B7693] text-xs text-end">{file.count}</span>
-                            <span className="text-[#6B7693] text-xs text-start">({file.percentage}%)</span>
+                            <span className="text-[#6B7693] text-xs text-start">({file.percentage.toFixed(1)}%)</span>
                         </div>
                     </div> 
                 )}
             </div>
+            {isModalsOpen && <FileTypesModal
+                items={files}
+                translations={translation.listTranslations}
+                onClose={() => setIsModalOpen(false)}
+            />
+        }
         </div>
+        
     )
 }
