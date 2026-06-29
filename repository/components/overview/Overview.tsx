@@ -5,6 +5,9 @@ import { useAppState } from "@/app-shell/context";
 import { getMetricVisualConfig } from "@/repository/types";
 import { Tooltip } from "@/shared/ui";
 import { ArchitectureScoreCard } from "./ArchitectureScoreCard";
+import { useSharedUserActions } from "@/shared/hooks";
+import { ArchitectureScoreModal } from "./ArchitectureScoreModal";
+import { IconButton, PurpleButton } from "@/shared/ui/buttons";
 
 
 export function Overview() {
@@ -12,6 +15,10 @@ export function Overview() {
     const { appState, t, actions } = useAppState()
 
     const stats = appState.repoStats
+
+    const {
+        isModalOpen, setIsModalOpen
+    } = useSharedUserActions()
 
     if (!stats) {
         return <div/>
@@ -29,31 +36,24 @@ export function Overview() {
                     <span className="text-xs leading-relaxed text-[#7F89A7]">{t.ui.overview.description}</span>
                 </div>
                 <div className="flex gap-2">
-                    <button
-                        type="button"
-                        className="cursor-pointer flex h-7 items-center gap-2 px-4 rounded bg-[#0E1220] border-[#1F2A44] border text-xs font-semibold text-[#F8FAFC] hover:border-[#A78BFA] hover:text-[#A78BFA] active:scale-[0.98]"
-                    >   
-                        <Share className="w-4 h-4"/>
-                        {t.ui.overview.buttons.share.label}
-                    </button>
-                    <button
-                        type="button"
-                        className="cursor-pointer flex h-7 items-center gap-2 px-4 rounded bg-[#0E1220] border-[#1F2A44] border text-xs font-semibold text-[#F8FAFC] hover:border-[#A78BFA] hover:text-[#A78BFA] active:scale-[0.98]"
-                    >   
-                        <Download className="w-4 h-4"/>
-                        {t.ui.overview.buttons.export.label}
-                    </button>
-                    <button
-                        type="button"
+                    <IconButton
+                        Icon={Share}
+                        label={t.ui.overview.buttons.share.label}
+                        onClick={() => {}}
+                    />
+                    <IconButton
+                        Icon={Download}
+                        label={t.ui.overview.buttons.export.label}
+                        onClick={() => {}}
+                    />
+                    <PurpleButton
+                        Icon={RefreshCw}
+                        label={t.ui.overview.buttons.scan.label}
                         onClick={actions.handleScan}
-                        className="cursor-pointer flex h-7 items-center gap-2 px-4 rounded bg-[#6D4AFF] text-xs font-semibold text-[#F8FAFC] hover:bg-[#7C5CFF] active:scale-[0.98]"
-                    >   
-                        <RefreshCw className="w-4 h-4"/>
-                        {t.ui.overview.buttons.scan.label}
-                    </button>
+                    />
                 </div>
             </div>
-            <div style={{ gridTemplateColumns }} className="grid gap-x-2">
+            <div style={{ gridTemplateColumns }} className="grid gap-x-2 items-center">
                 {stats.architectureMetrics.map((metric) => {
                     const config = getMetricVisualConfig(metric.type);
 
@@ -70,12 +70,27 @@ export function Overview() {
                     );})
                 }
                 <Tooltip placement="bottom" label={t.ui.overview.metrics.score.description}>
-                    <ArchitectureScoreCard
-                        value={stats.architectureScore}
-                        label={t.ui.overview.metrics.score.label}
+                    <button
+                        type="button"
+                        className="cursor-pointer w-full rounded-lg hover:ring-1 hover:ring-[#A78BFA]"
+                        onClick={() => setIsModalOpen(true)}
+                    >
+                        <ArchitectureScoreCard
+                            value={stats.architectureScore}
+                            label={t.ui.overview.metrics.score.label}
                     />
+                    </button>
                 </Tooltip>
             </div>
+            {isModalOpen && <ArchitectureScoreModal
+                name={t.ui.overview.metrics.score.label}
+                items={stats.architectureScoreDetails}
+                description={t.ui.overview.metrics.score.description}
+                translations={t.ui.overview.architectureScore}
+                onClose={() => setIsModalOpen(false)}
+            />
+
+            }
         </div>
     );
 }

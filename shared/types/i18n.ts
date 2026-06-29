@@ -44,3 +44,5 @@ export type GraphTooltipTranslations = TranslationSchema["ui"]["graph"]["tooltip
 export type FilesListTranslations = TranslationSchema["ui"]["stats"]["files"]["listTranslations"]
 export type LanguagesListTranslations = TranslationSchema["ui"]["stats"]["languages"]["listTranslations"]
 export type DirectoriesListTranslations = TranslationSchema["ui"]["stats"]["directories"]["listTranslations"]
+
+export type ArchitectureScoreTranslations = TranslationSchema["ui"]["overview"]["architectureScore"]

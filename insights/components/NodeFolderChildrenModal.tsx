@@ -6,6 +6,7 @@ import { InsightsNodeFolderModalTranslations } from "@/shared/types";
 import { FileText, Folder, FolderTree, Search } from "lucide-react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { ModalHeaderPanel } from "@/shared/ui/panels";
 
 type NodeFolderChildrenModalProps = {
     name: string;
@@ -38,34 +39,16 @@ export function NodeFolderChildrenModal({ name, items, translations, onClose }: 
     return createPortal(
         <div className="fixed inset-0 z-999998 flex items-center py-10 justify-center bg-black/60 backdrop-blur-sm">
             <div className="flex flex-col w-full max-w-lg max-h-[90vh] overflow-hidden rounded-2xl border border-[#243154] bg-[#07101F] shadow-2xl">
-                <div className="flex justify-between p-5 border-b border-[#243154]">
-                    <div className="flex gap-3 items-center select-none">
-                        <div className="p-2 rounded-lg bg-fuchsia-500/10 text-fuchsia-400">
-                            <FolderTree size={30}/>
-                        </div>
-                        <div className="flex flex-col">
-                            <div className="flex items-center gap-3">
-                                <span className="text-xl font-semibold">
-                                    {name}
-                                </span>
-                                <div className="rounded-full text-xs text-fuchsia-400 items-center bg-fuchsia-900/20 px-2 py-1">
-                                    {`${items.length} ${translations.badge}`}
-                                </div>
-                            </div>
-                            <p className="text-sm text-[#7F89A7]">
-                                {translations.description}
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="cursor-pointer rounded-lg border border-[#1F2A44] my-auto py-1 px-2 bg-[#0E1220] font-semibold text-[#F8FAFC] hover:border-[#A78BFA] hover:text-[#A78BFA] active:scale-[0.98]"
-                    >
-                        ✕
-                    </button>
-                </div>
+                <ModalHeaderPanel
+                    Icon={FolderTree}
+                    iconStyle={{bg: "bg-fuchsia-500/10", color: "text-fuchsia-400"}}
+                    badgeStyle={{bg: "bg-fuchsia-900/20", color: "text-fuchsia-400"}}
+                    title={name}
+                    count={items.length}
+                    badge={translations.badge}
+                    description={translations.description}
+                    onClose={onClose}
+                />
                 <div className="flex flex-col flex-1 min-h-0 gap-2 px-2 py-3">
                     <div className="flex justify-between px-1">
                         <div className="flex h-8 self-center w-full overflow-hidden rounded-lg border border-white/10 bg-[#050816]">

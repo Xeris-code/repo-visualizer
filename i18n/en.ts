@@ -35,6 +35,14 @@ export const en = {
                     label: "Scan again"
                 },
             },
+            architectureScore: {
+                category: "Category",
+                distribution: "Distribution",
+                score: "Score",
+                issue: "Issues",
+                positive: "Positives",
+                badge: "grade"
+            },
             metrics: {
                 files: {
                     label: "Files",

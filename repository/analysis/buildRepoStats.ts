@@ -8,9 +8,15 @@ import { detectProjectKind, getArchitectureMetrics, getArchitectureScoreDetails 
 export function buildRepoStats (repoName: string, tree: RepositoryTree, languages: JSON): RepoStats {
 
     const languageList = getLanguages(languages)
+    const languageRecord: Record<string, number> = {}
+
+    Object.entries(languages).forEach(([key, value]) => {
+        languageRecord[key] = value;
+    })
+
     const allDirectoryList = getAllDirectories(tree.folders, tree.files, getRepositorySizeNumber(tree.files))
 
-    const projectKind = detectProjectKind(tree.files);
+    const projectKind = detectProjectKind(tree.files, languageRecord);
 
     const architectureMetrics = getArchitectureMetrics(
         projectKind,

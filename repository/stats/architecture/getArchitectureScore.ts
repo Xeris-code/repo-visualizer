@@ -10,11 +10,61 @@ type ProjectScoreProfile = {
   sourceRoots: string[];
   testPatterns: ((path: string) => boolean)[];
   frameworkSignals: string[];
+
+  lockFileRequired?: boolean;
+  monorepoFriendly?: boolean;
+  rootFilesLimit?: number;
+  rootFoldersLimit?: number;
+  maxDepthLimit?: number;
+
+  largeSourceFileLimit?: number;
+  hugeSourceFileLimit?: number;
+  generatedFilesPenaltyLimit?: number;
+  fileToFolderRatioLimit?: number;
+  ignoredMaintainabilityPaths?: string[];
 };
 
-const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
-  generic: ProjectScoreProfile;
-} = {
+function hasFile(paths: string[], fileNameValue: string) {
+  return paths.some((path) => fileName(path) === fileNameValue);
+}
+
+function hasExactPath(paths: string[], target: string) {
+  return paths.includes(normalizePath(target));
+}
+
+function hasPathEnding(paths: string[], suffix: string) {
+  return paths.some((path) => path.endsWith(normalizePath(suffix)));
+}
+
+function hasDirectoryMatch(folderPaths: string[], directory: string) {
+  const normalizedDirectory = normalizePath(directory);
+
+  return folderPaths.some(
+    (path) =>
+      path === normalizedDirectory ||
+      path.startsWith(`${normalizedDirectory}/`) ||
+      path.endsWith(`/${normalizedDirectory}`) ||
+      path.includes(`/${normalizedDirectory}/`)
+  );
+}
+
+function countDetectedDirs(folderPaths: string[], dirs: string[]) {
+  return dirs.filter((dir) => hasDirectoryMatch(folderPaths, dir));
+}
+
+function hasAnySourceRoot(folderPaths: string[], roots: string[]) {
+  return roots.some((root) => hasDirectoryMatch(folderPaths, root));
+}
+
+function getRootFiles(paths: string[]) {
+  return paths.filter((path) => !path.includes("/"));
+}
+
+function getRootFolders(folderPaths: string[]) {
+  return folderPaths.filter((path) => !path.includes("/"));
+}
+
+const scoreProfiles: Record<ProjectKind, ProjectScoreProfile> = {
   next: {
     sourceExtensions: [".ts", ".tsx", ".js", ".jsx"],
     dependencyFiles: ["package.json"],
@@ -23,21 +73,46 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
       "next.config.js",
       "next.config.ts",
       "next.config.mjs",
+      "next.config.cjs",
       "tsconfig.json",
       "eslint.config.js",
       ".eslintrc",
       ".eslintrc.json",
       "prettier.config.js",
       ".prettierrc",
+      "tailwind.config.ts",
+      "tailwind.config.js",
     ],
-    recommendedDirs: ["app", "pages", "components", "lib", "hooks", "public"],
-    sourceRoots: ["app", "pages", "src"],
-    frameworkSignals: ["next.config.js", "next.config.ts", "next.config.mjs"],
+    recommendedDirs: ["app", "pages", "components", "lib", "hooks", "public", "src", "packages"],
+    sourceRoots: ["app", "pages", "src", "packages"],
+    frameworkSignals: ["next.config.js", "next.config.ts", "next.config.mjs", "next.config.cjs", "package.json"],
     testPatterns: [
       (path) => path.includes("__tests__/"),
       (path) => path.includes("/tests/"),
+      (path) => path.includes("/test/"),
       (path) => path.includes(".test."),
       (path) => path.includes(".spec."),
+      (path) => path.startsWith("test/"),
+    ],
+    lockFileRequired: true,
+    monorepoFriendly: true,
+    rootFilesLimit: 40,
+    rootFoldersLimit: 45,
+    maxDepthLimit: 14,
+    largeSourceFileLimit: 300_000,
+    hugeSourceFileLimit: 1_000_000,
+    generatedFilesPenaltyLimit: 500,
+    fileToFolderRatioLimit: 150,
+    ignoredMaintainabilityPaths: [
+      "/test/",
+      "/tests/",
+      "/fixtures/",
+      "/__fixtures__/",
+      "/examples/",
+      "/bench/",
+      "/compiled/",
+      "/src/compiled/",
+      "/packages/next/src/compiled/",
     ],
   },
 
@@ -52,16 +127,67 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
       "eslint.config.js",
       ".eslintrc",
       ".prettierrc",
+      "tailwind.config.ts",
+      "tailwind.config.js",
     ],
-    recommendedDirs: ["src", "components", "hooks", "pages", "views", "lib"],
+    recommendedDirs: ["src", "components", "hooks", "pages", "views", "lib", "assets", "public"],
     sourceRoots: ["src", "app"],
-    frameworkSignals: ["vite.config.ts", "vite.config.js", "src/main.tsx", "src/index.tsx"],
+    frameworkSignals: ["vite.config.ts", "vite.config.js", "src/main.tsx", "src/index.tsx", "src/app.tsx"],
     testPatterns: [
       (path) => path.includes("__tests__/"),
       (path) => path.includes("/tests/"),
       (path) => path.includes(".test."),
       (path) => path.includes(".spec."),
     ],
+    lockFileRequired: true,
+  },
+
+  vue: {
+    sourceExtensions: [".vue", ".ts", ".js"],
+    dependencyFiles: ["package.json"],
+    lockFiles: ["pnpm-lock.yaml", "package-lock.json", "yarn.lock", "bun.lockb"],
+    configFiles: ["vite.config.ts", "vite.config.js", "vue.config.js", "tsconfig.json", "eslint.config.js"],
+    recommendedDirs: ["src", "components", "views", "pages", "router", "stores", "assets", "public"],
+    sourceRoots: ["src"],
+    frameworkSignals: ["vite.config.ts", "vite.config.js", "vue.config.js"],
+    testPatterns: [
+      (path) => path.includes("/tests/"),
+      (path) => path.includes("__tests__/"),
+      (path) => path.includes(".test."),
+      (path) => path.includes(".spec."),
+    ],
+    lockFileRequired: true,
+  },
+
+  angular: {
+    sourceExtensions: [".ts", ".html", ".scss", ".css"],
+    dependencyFiles: ["package.json", "angular.json"],
+    lockFiles: ["package-lock.json", "yarn.lock", "pnpm-lock.yaml"],
+    configFiles: ["angular.json", "tsconfig.json", "eslint.config.js", ".eslintrc"],
+    recommendedDirs: ["src", "app", "assets", "environments"],
+    sourceRoots: ["src", "src/app"],
+    frameworkSignals: ["angular.json"],
+    testPatterns: [
+      (path) => path.endsWith(".spec.ts"),
+      (path) => path.includes("/tests/"),
+    ],
+    lockFileRequired: true,
+  },
+
+  svelte: {
+    sourceExtensions: [".svelte", ".ts", ".js"],
+    dependencyFiles: ["package.json"],
+    lockFiles: ["pnpm-lock.yaml", "package-lock.json", "yarn.lock", "bun.lockb"],
+    configFiles: ["svelte.config.js", "svelte.config.ts", "vite.config.ts", "vite.config.js", "tsconfig.json"],
+    recommendedDirs: ["src", "routes", "lib", "components", "static"],
+    sourceRoots: ["src", "src/routes", "src/lib"],
+    frameworkSignals: ["svelte.config.js", "svelte.config.ts"],
+    testPatterns: [
+      (path) => path.includes("/tests/"),
+      (path) => path.includes(".test."),
+      (path) => path.includes(".spec."),
+    ],
+    lockFileRequired: true,
   },
 
   node: {
@@ -69,8 +195,8 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
     dependencyFiles: ["package.json"],
     lockFiles: ["pnpm-lock.yaml", "package-lock.json", "yarn.lock", "bun.lockb"],
     configFiles: ["tsconfig.json", "eslint.config.js", ".eslintrc", ".prettierrc"],
-    recommendedDirs: ["src", "routes", "controllers", "services", "models", "config"],
-    sourceRoots: ["src", "server", "api"],
+    recommendedDirs: ["src", "routes", "controllers", "services", "models", "config", "lib"],
+    sourceRoots: ["src", "server", "api", "lib"],
     frameworkSignals: ["package.json"],
     testPatterns: [
       (path) => path.includes("__tests__/"),
@@ -78,14 +204,15 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
       (path) => path.includes(".test."),
       (path) => path.includes(".spec."),
     ],
+    lockFileRequired: true,
   },
 
   python: {
     sourceExtensions: [".py"],
     dependencyFiles: ["requirements.txt", "pyproject.toml", "setup.py", "pipfile"],
     lockFiles: ["poetry.lock", "pipfile.lock"],
-    configFiles: ["pyproject.toml", "setup.cfg", "tox.ini", "pytest.ini", ".flake8"],
-    recommendedDirs: ["src", "tests", "docs"],
+    configFiles: ["pyproject.toml", "setup.cfg", "tox.ini", "pytest.ini", ".flake8", "ruff.toml"],
+    recommendedDirs: ["src", "tests", "docs", "scripts"],
     sourceRoots: ["src"],
     frameworkSignals: ["requirements.txt", "pyproject.toml", "setup.py"],
     testPatterns: [
@@ -94,6 +221,60 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
       (path) => fileName(path).startsWith("test_"),
       (path) => fileName(path).endsWith("_test.py"),
     ],
+    lockFileRequired: false,
+  },
+
+  haskell: {
+    sourceExtensions: [".hs", ".lhs"],
+    dependencyFiles: ["stack.yaml", "cabal.project", "package.yaml"],
+    lockFiles: ["stack.yaml.lock", "cabal.project.freeze"],
+    configFiles: ["stack.yaml", "cabal.project", "package.yaml", "hie.yaml"],
+    recommendedDirs: ["src", "app", "test", "tests", "lib"],
+    sourceRoots: ["src", "app"],
+    frameworkSignals: ["stack.yaml", "cabal.project", "package.yaml"],
+    testPatterns: [
+      (path) => path.includes("/test/"),
+      (path) => path.includes("/tests/"),
+      (path) => path.endsWith("spec.hs"),
+      (path) => path.endsWith("test.hs"),
+    ],
+    lockFileRequired: false,
+  },
+
+  kotlin: {
+    sourceExtensions: [".kt", ".kts"],
+    dependencyFiles: ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"],
+    lockFiles: ["gradle.lockfile"],
+    configFiles: ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"],
+    recommendedDirs: ["src", "app", "core", "shared", "commonMain", "androidMain", "jvmMain"],
+    sourceRoots: ["src", "src/main/kotlin", "shared/src"],
+    frameworkSignals: ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"],
+    testPatterns: [
+      (path) => path.includes("/test/"),
+      (path) => path.includes("/tests/"),
+      (path) => path.includes("/androidtest/"),
+      (path) => path.endsWith("test.kt"),
+      (path) => path.endsWith("tests.kt"),
+    ],
+    lockFileRequired: false,
+    monorepoFriendly: true,
+  },
+
+  swift: {
+    sourceExtensions: [".swift"],
+    dependencyFiles: ["package.swift", "podfile", "cartfile"],
+    lockFiles: ["package.resolved", "podfile.lock", "cartfile.resolved"],
+    configFiles: ["package.swift"],
+    recommendedDirs: ["Sources", "Tests", "App", "Models", "Views"],
+    sourceRoots: ["sources", "app"],
+    frameworkSignals: ["package.swift", "podfile", "cartfile"],
+    testPatterns: [
+      (path) => path.includes("/tests/"),
+      (path) => path.includes("/uitests/"),
+      (path) => path.endsWith("test.swift"),
+      (path) => path.endsWith("tests.swift"),
+    ],
+    lockFileRequired: false,
   },
 
   java: {
@@ -101,22 +282,23 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
     dependencyFiles: ["pom.xml", "build.gradle", "build.gradle.kts"],
     lockFiles: ["gradle.lockfile"],
     configFiles: ["pom.xml", "build.gradle", "build.gradle.kts", "settings.gradle"],
-    recommendedDirs: ["src/main", "src/test"],
-    sourceRoots: ["src/main/java"],
+    recommendedDirs: ["src/main", "src/test", "src/main/java", "src/test/java"],
+    sourceRoots: ["src/main/java", "src/main"],
     frameworkSignals: ["pom.xml", "build.gradle", "build.gradle.kts"],
     testPatterns: [
       (path) => path.includes("/src/test/"),
       (path) => path.endsWith("test.java"),
       (path) => path.endsWith("tests.java"),
     ],
+    lockFileRequired: false,
   },
 
   dotnet: {
     sourceExtensions: [".cs", ".fs"],
-    dependencyFiles: [],
+    dependencyFiles: [".csproj", ".fsproj", ".sln"],
     lockFiles: ["packages.lock.json"],
     configFiles: ["nuget.config", "global.json", "appsettings.json"],
-    recommendedDirs: ["src", "tests"],
+    recommendedDirs: ["src", "tests", "test"],
     sourceRoots: ["src"],
     frameworkSignals: [".sln", ".csproj", ".fsproj"],
     testPatterns: [
@@ -125,6 +307,7 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
       (path) => path.endsWith("test.cs"),
       (path) => path.endsWith("tests.cs"),
     ],
+    lockFileRequired: false,
   },
 
   go: {
@@ -132,10 +315,11 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
     dependencyFiles: ["go.mod"],
     lockFiles: ["go.sum"],
     configFiles: ["go.mod"],
-    recommendedDirs: ["cmd", "internal", "pkg"],
+    recommendedDirs: ["cmd", "internal", "pkg", "api"],
     sourceRoots: ["cmd", "internal", "pkg"],
     frameworkSignals: ["go.mod"],
     testPatterns: [(path) => path.endsWith("_test.go")],
+    lockFileRequired: false,
   },
 
   rust: {
@@ -143,13 +327,15 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
     dependencyFiles: ["cargo.toml"],
     lockFiles: ["cargo.lock"],
     configFiles: ["cargo.toml", "rustfmt.toml"],
-    recommendedDirs: ["src", "tests", "benches", "examples"],
-    sourceRoots: ["src"],
+    recommendedDirs: ["src", "tests", "benches", "examples", "crates"],
+    sourceRoots: ["src", "crates"],
     frameworkSignals: ["cargo.toml"],
     testPatterns: [
       (path) => path.includes("/tests/"),
       (path) => path.endsWith("_test.rs"),
     ],
+    lockFileRequired: false,
+    monorepoFriendly: true,
   },
 
   php: {
@@ -164,6 +350,7 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
       (path) => path.includes("/tests/"),
       (path) => path.endsWith("test.php"),
     ],
+    lockFileRequired: false,
   },
 
   ruby: {
@@ -180,57 +367,97 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
       (path) => path.endsWith("_spec.rb"),
       (path) => path.endsWith("_test.rb"),
     ],
+    lockFileRequired: false,
+  },
+
+  android: {
+    sourceExtensions: [".kt", ".java", ".xml"],
+    dependencyFiles: ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"],
+    lockFiles: ["gradle.lockfile"],
+    configFiles: ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"],
+    recommendedDirs: ["app", "src", "res", "main", "androidTest", "test"],
+    sourceRoots: ["app/src", "src/main/java", "src/main/kotlin"],
+    frameworkSignals: ["androidmanifest.xml", "build.gradle", "build.gradle.kts"],
+    testPatterns: [
+      (path) => path.includes("/androidtest/"),
+      (path) => path.includes("/test/"),
+      (path) => path.endsWith("test.kt"),
+      (path) => path.endsWith("test.java"),
+    ],
+    lockFileRequired: false,
+  },
+
+  ios: {
+    sourceExtensions: [".swift", ".m", ".mm", ".h"],
+    dependencyFiles: ["package.swift", "podfile", "cartfile"],
+    lockFiles: ["package.resolved", "podfile.lock", "cartfile.resolved"],
+    configFiles: ["package.swift"],
+    recommendedDirs: ["Sources", "Tests", "App", "Models", "Views"],
+    sourceRoots: ["sources", "app"],
+    frameworkSignals: [".xcodeproj", ".xcworkspace", "package.swift", "podfile"],
+    testPatterns: [
+      (path) => path.includes("/tests/"),
+      (path) => path.includes("/uitests/"),
+      (path) => path.endsWith("test.swift"),
+      (path) => path.endsWith("tests.swift"),
+    ],
+    lockFileRequired: false,
+  },
+
+  polyglot: {
+    sourceExtensions: [
+      ".ts", ".tsx", ".js", ".jsx", ".vue", ".svelte", ".py", ".java", ".cs",
+      ".go", ".rs", ".php", ".rb", ".swift", ".kt", ".hs", ".lhs", ".cpp", ".c", ".h",
+    ],
+    dependencyFiles: [
+      "package.json", "requirements.txt", "pyproject.toml", "pom.xml", "build.gradle",
+      "go.mod", "cargo.toml", "composer.json", "gemfile", "stack.yaml", "cabal.project",
+      "package.swift",
+    ],
+    lockFiles: [
+      "pnpm-lock.yaml", "package-lock.json", "yarn.lock", "poetry.lock", "go.sum",
+      "cargo.lock", "composer.lock", "gemfile.lock", "stack.yaml.lock", "package.resolved",
+    ],
+    configFiles: [
+      "tsconfig.json", "eslint.config.js", ".eslintrc", ".prettierrc", "dockerfile",
+      "docker-compose.yml", "pyproject.toml", "cargo.toml", "go.mod",
+    ],
+    recommendedDirs: ["src", "app", "apps", "packages", "lib", "tests", "docs", "crates", "cmd"],
+    sourceRoots: ["src", "app", "apps", "packages", "lib", "crates", "cmd"],
+    frameworkSignals: [],
+    testPatterns: [
+      (path) => path.includes("/tests/"),
+      (path) => path.includes("/test/"),
+      (path) => path.includes("__tests__/"),
+      (path) => path.includes(".test."),
+      (path) => path.includes(".spec."),
+      (path) => fileName(path).startsWith("test_"),
+      (path) => fileName(path).endsWith("_test.py"),
+      (path) => path.endsWith("_test.go"),
+    ],
+    lockFileRequired: false,
+    monorepoFriendly: true,
+    rootFilesLimit: 35,
+    rootFoldersLimit: 35,
+    maxDepthLimit: 12,
   },
 
   generic: {
     sourceExtensions: [
-      ".ts",
-      ".tsx",
-      ".js",
-      ".jsx",
-      ".vue",
-      ".svelte",
-      ".py",
-      ".java",
-      ".cs",
-      ".go",
-      ".rs",
-      ".php",
-      ".rb",
-      ".swift",
-      ".kt",
-      ".cpp",
-      ".c",
-      ".h",
+      ".ts", ".tsx", ".js", ".jsx", ".vue", ".svelte", ".py", ".java", ".cs",
+      ".go", ".rs", ".php", ".rb", ".swift", ".kt", ".cpp", ".c", ".h",
     ],
     dependencyFiles: [
-      "package.json",
-      "requirements.txt",
-      "pyproject.toml",
-      "pom.xml",
-      "build.gradle",
-      "go.mod",
-      "cargo.toml",
-      "composer.json",
-      "gemfile",
+      "package.json", "requirements.txt", "pyproject.toml", "pom.xml", "build.gradle",
+      "go.mod", "cargo.toml", "composer.json", "gemfile",
     ],
     lockFiles: [
-      "pnpm-lock.yaml",
-      "package-lock.json",
-      "yarn.lock",
-      "poetry.lock",
-      "go.sum",
-      "cargo.lock",
-      "composer.lock",
-      "gemfile.lock",
+      "pnpm-lock.yaml", "package-lock.json", "yarn.lock", "poetry.lock", "go.sum",
+      "cargo.lock", "composer.lock", "gemfile.lock",
     ],
     configFiles: [
-      "tsconfig.json",
-      "eslint.config.js",
-      ".eslintrc",
-      ".prettierrc",
-      "dockerfile",
-      "docker-compose.yml",
+      "tsconfig.json", "eslint.config.js", ".eslintrc", ".prettierrc",
+      "dockerfile", "docker-compose.yml",
     ],
     recommendedDirs: ["src", "app", "lib", "tests", "docs"],
     sourceRoots: ["src", "app", "lib"],
@@ -244,6 +471,7 @@ const scoreProfiles: Partial<Record<ProjectKind, ProjectScoreProfile>> & {
       (path) => fileName(path).startsWith("test_"),
       (path) => fileName(path).endsWith("_test.py"),
     ],
+    lockFileRequired: false,
   },
 };
 
@@ -340,11 +568,19 @@ function scoreDependencies(
   const paths = getPaths(files);
 
   const dependencyFiles = paths.filter((path) =>
-    profile.dependencyFiles.includes(fileName(path))
+    profile.dependencyFiles.some(
+      (dependencyFile) =>
+        fileName(path) === dependencyFile ||
+        path.endsWith(dependencyFile)
+    )
   );
 
   const lockFiles = paths.filter((path) =>
-    profile.lockFiles.includes(fileName(path))
+    profile.lockFiles.some(
+      (lockFile) =>
+        fileName(path) === lockFile ||
+        path.endsWith(lockFile)
+    )
   );
 
   let score = 0;
@@ -361,8 +597,11 @@ function scoreDependencies(
   if (lockFiles.length > 0) {
     score += 4;
     positives.push("Lock file detected");
-  } else if (dependencyFiles.length > 0) {
+  } else if (dependencyFiles.length > 0 && profile.lockFileRequired !== false) {
     issues.push("Dependency manifest exists but lock file is missing");
+  } else if (dependencyFiles.length > 0 && profile.lockFileRequired === false) {
+    score += 4;
+    positives.push("Lock file is optional for this project type");
   }
 
   return {
@@ -433,15 +672,13 @@ function scoreStructure(
   const paths = getPaths(files);
   const folderPaths = getPaths(folders);
 
-  const rootFiles = paths.filter((path) => !path.includes("/"));
-  const rootFolders = folderPaths.filter((path) => !path.includes("/"));
+  const rootFiles = getRootFiles(paths);
+  const rootFolders = getRootFolders(folderPaths);
 
-  const hasSourceRoot = profile.sourceRoots.some((root) =>
-    folderPaths.includes(root)
-  );
-
-  const recommendedDirsDetected = profile.recommendedDirs.filter((dir) =>
-    folderPaths.some((path) => path === dir || path.startsWith(`${dir}/`))
+  const hasSourceRoot = hasAnySourceRoot(folderPaths, profile.sourceRoots);
+  const recommendedDirsDetected = countDetectedDirs(
+    folderPaths,
+    profile.recommendedDirs
   );
 
   const maxDepth = Math.max(
@@ -449,9 +686,23 @@ function scoreStructure(
     ...paths.map((path) => path.split("/").length - 1)
   );
 
+  const rootFilesLimit = profile.rootFilesLimit ?? (profile.monorepoFriendly ? 30 : 18);
+  const rootFoldersLimit = profile.rootFoldersLimit ?? (profile.monorepoFriendly ? 30 : 16);
+  const maxDepthLimit = profile.maxDepthLimit ?? (profile.monorepoFriendly ? 12 : 9);
+
   let score = 20;
   const positives: string[] = [];
   const issues: string[] = [];
+
+  const monorepoStructureDetected =
+    hasDirectoryMatch(folderPaths, "packages") ||
+    hasDirectoryMatch(folderPaths, "apps") ||
+    hasDirectoryMatch(folderPaths, "crates") ||
+    hasDirectoryMatch(folderPaths, "examples");
+
+  if (profile.monorepoFriendly && monorepoStructureDetected) {
+    positives.push("Monorepo-style structure detected");
+  }
 
   if (hasSourceRoot) {
     positives.push("Source root detected");
@@ -467,20 +718,25 @@ function scoreStructure(
     issues.push("Few recognizable project structure folders detected");
   }
 
-  if (rootFiles.length > 20) {
-    score -= 5;
+  if (rootFiles.length > rootFilesLimit) {
+    score -= profile.monorepoFriendly ? 3 : 5;
     issues.push("Many files are located in the repository root");
-  } else if (rootFiles.length <= 10) {
+  } else {
     positives.push("Repository root is relatively clean");
   }
 
-  if (rootFolders.length > 18) {
-    score -= 3;
-    issues.push("High number of root-level folders");
+  if (rootFolders.length > rootFoldersLimit) {
+    if (profile.monorepoFriendly && monorepoStructureDetected) {
+      score -= 1;
+      issues.push("High number of root-level folders, but monorepo structure was detected");
+    } else {
+      score -= profile.monorepoFriendly ? 2 : 3;
+      issues.push("High number of root-level folders");
+    }
   }
 
-  if (maxDepth > 8) {
-    score -= 3;
+  if (maxDepth > maxDepthLimit) {
+    score -= profile.monorepoFriendly ? 2 : 3;
     issues.push("Very deep folder nesting detected");
   }
 
@@ -507,22 +763,43 @@ function scoreFrameworkConventions(
   const positives: string[] = [];
   const issues: string[] = [];
 
-  const detectedSignals = profile.frameworkSignals.filter((signal) =>
-    signal.startsWith(".")
-      ? paths.some((path) => path.endsWith(signal))
-      : paths.includes(signal)
-  );
-
   if (projectKind === "generic") {
     return {
       id: "framework",
-      label: "Framework conventions",
-      score: 10,
+      label: "Project conventions",
+      score: 9,
       maxScore: 14,
       positives: ["Generic repository detected"],
       issues: [],
     };
   }
+
+  if (projectKind === "polyglot") {
+    const conventionScore = getConventionScore(projectKind, paths, folderPaths);
+
+    return {
+      id: "framework",
+      label: "Project conventions",
+      score: clamp(conventionScore.score + 5, 0, 14),
+      maxScore: 14,
+      positives: ["Polyglot repository detected", ...conventionScore.positives],
+      issues: conventionScore.issues,
+    };
+  }
+
+  const detectedSignals = profile.frameworkSignals.filter((signal) => {
+    const normalizedSignal = normalizePath(signal);
+
+    if (normalizedSignal.startsWith(".")) {
+      return paths.some((path) => path.endsWith(normalizedSignal));
+    }
+
+    return (
+      paths.includes(normalizedSignal) ||
+      paths.some((path) => fileName(path) === normalizedSignal) ||
+      paths.some((path) => path.endsWith(normalizedSignal))
+    );
+  });
 
   if (detectedSignals.length > 0) {
     score += 5;
@@ -532,13 +809,14 @@ function scoreFrameworkConventions(
   }
 
   const conventionScore = getConventionScore(projectKind, paths, folderPaths);
+
   score += conventionScore.score;
   positives.push(...conventionScore.positives);
   issues.push(...conventionScore.issues);
 
   return {
     id: "framework",
-    label: "Framework conventions",
+    label: "Project conventions",
     score: clamp(score, 0, 14),
     maxScore: 14,
     positives,
@@ -605,24 +883,56 @@ function scoreMaintainability(
   folders: GithubTreeItem[],
   profile: ProjectScoreProfile
 ): ScoreCategory {
-  const paths = getPaths(files);
+  const normalizedFiles = files.map((file) => ({
+    ...file,
+    path: normalizePath(file.path),
+  }));
 
-  const sourceFiles = files.filter((file) =>
-    profile.sourceExtensions.some((extension) =>
-      file.path.toLowerCase().endsWith(extension)
-    )
+  const ignoredPaths = profile.ignoredMaintainabilityPaths ?? [];
+
+  const isIgnoredPath = (path: string) =>
+    ignoredPaths.some((ignored) => path.includes(normalizePath(ignored)));
+
+  const isGeneratedOrVendorPath = (path: string) =>
+    path.includes("node_modules/") ||
+    path.includes("/vendor/") ||
+    path.includes("/dist/") ||
+    path.includes("/build/") ||
+    path.includes("/coverage/") ||
+    path.includes("/.next/") ||
+    path.includes("/out/") ||
+    path.includes("/compiled/");
+
+  const sourceFiles = normalizedFiles.filter((file) => {
+    const path = file.path;
+
+    return (
+      profile.sourceExtensions.some((extension) =>
+        path.endsWith(extension)
+      ) && !isIgnoredPath(path)
+    );
+  });
+
+  const largeLimit = profile.largeSourceFileLimit ?? 150_000;
+  const hugeLimit = profile.hugeSourceFileLimit ?? 500_000;
+  const generatedLimit =
+    profile.generatedFilesPenaltyLimit ??
+    (profile.monorepoFriendly ? 500 : 20);
+
+  const fileToFolderRatioLimit =
+    profile.fileToFolderRatioLimit ??
+    (profile.monorepoFriendly ? 150 : 80);
+
+  const largeSourceFiles = sourceFiles.filter(
+    (file) => (file.size ?? 0) > largeLimit
   );
 
-  const largeSourceFiles = sourceFiles.filter((file) => (file.size ?? 0) > 150_000);
-  const hugeSourceFiles = sourceFiles.filter((file) => (file.size ?? 0) > 500_000);
+  const hugeSourceFiles = sourceFiles.filter(
+    (file) => (file.size ?? 0) > hugeLimit
+  );
 
-  const generatedOrVendorFiles = paths.filter(
-    (path) =>
-      path.includes("node_modules/") ||
-      path.includes("/vendor/") ||
-      path.includes("/dist/") ||
-      path.includes("/build/") ||
-      path.includes("/coverage/")
+  const generatedOrVendorFiles = normalizedFiles.filter((file) =>
+    isGeneratedOrVendorPath(file.path)
   );
 
   let score = 14;
@@ -630,24 +940,26 @@ function scoreMaintainability(
   const issues: string[] = [];
 
   if (largeSourceFiles.length > 0) {
-    score -= Math.min(4, largeSourceFiles.length);
-    issues.push("Large source files detected");
+    score -= profile.monorepoFriendly ? 1 : Math.min(4, largeSourceFiles.length);
+    issues.push(`${largeSourceFiles.length} large source files detected`);
   } else {
     positives.push("No unusually large source files detected");
   }
 
   if (hugeSourceFiles.length > 0) {
-    score -= 4;
-    issues.push("Very large source files detected");
+    score -= profile.monorepoFriendly ? 1 : 4;
+    issues.push(`${hugeSourceFiles.length} very large source files detected`);
   }
 
-  if (generatedOrVendorFiles.length > 20) {
-    score -= 3;
+  if (generatedOrVendorFiles.length > generatedLimit) {
+    score -= profile.monorepoFriendly ? 1 : 3;
     issues.push("Generated/vendor/build files appear to be included");
+  } else if (generatedOrVendorFiles.length > 0) {
+    positives.push("Generated/vendor files are within expected range");
   }
 
-  if (folders.length > 0 && files.length / folders.length > 80) {
-    score -= 3;
+  if (folders.length > 0 && files.length / folders.length > fileToFolderRatioLimit) {
+    score -= profile.monorepoFriendly ? 1 : 3;
     issues.push("High file-to-folder ratio may indicate weak organization");
   }
 
@@ -676,16 +988,20 @@ function getConventionScore(
 
   switch (projectKind) {
     case "next": {
-      const hasAppOrPages = folderPaths.includes("app") || folderPaths.includes("pages");
-      const hasComponents = folderPaths.includes("components") || folderPaths.includes("src/components");
-      const hasLib = folderPaths.includes("lib") || folderPaths.includes("src/lib");
-      const hasTsConfig = paths.includes("tsconfig.json");
+      const hasAppOrPages =
+        hasDirectoryMatch(folderPaths, "app") ||
+        hasDirectoryMatch(folderPaths, "pages") ||
+        hasDirectoryMatch(folderPaths, "packages/next");
+
+      const hasComponents = hasDirectoryMatch(folderPaths, "components");
+      const hasLib = hasDirectoryMatch(folderPaths, "lib") || hasDirectoryMatch(folderPaths, "shared");
+      const hasTsConfig = hasFile(paths, "tsconfig.json");
 
       if (hasAppOrPages) {
         score += 3;
-        positives.push("Next.js routing directory detected");
+        positives.push("Next.js routing or framework directory detected");
       } else {
-        issues.push("No app/pages routing directory detected");
+        issues.push("No app/pages or Next framework directory detected");
       }
 
       if (hasComponents) {
@@ -706,28 +1022,143 @@ function getConventionScore(
       break;
     }
 
-    case "python": {
-      const hasPyproject = paths.includes("pyproject.toml");
-      const hasSrc = folderPaths.includes("src");
-      const hasTests = folderPaths.includes("tests") || folderPaths.includes("test");
-      const hasInitFiles = paths.some((path) => path.endsWith("__init__.py"));
+    case "react": {
+      if (hasDirectoryMatch(folderPaths, "src")) {
+        score += 3;
+        positives.push("src directory detected");
+      }
 
-      if (hasPyproject) {
+      if (hasDirectoryMatch(folderPaths, "components")) {
+        score += 2;
+        positives.push("Components directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "hooks")) {
+        score += 2;
+        positives.push("Hooks directory detected");
+      }
+
+      if (hasFile(paths, "vite.config.ts") || hasFile(paths, "vite.config.js")) {
+        score += 2;
+        positives.push("Vite configuration detected");
+      }
+
+      break;
+    }
+
+    case "vue": {
+      if (paths.some((path) => path.endsWith(".vue"))) {
+        score += 3;
+        positives.push("Vue single-file components detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "components")) {
+        score += 2;
+        positives.push("Components directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "views") || hasDirectoryMatch(folderPaths, "pages")) {
+        score += 2;
+        positives.push("Views/pages directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "router")) {
+        score += 2;
+        positives.push("Router directory detected");
+      }
+
+      break;
+    }
+
+    case "angular": {
+      if (hasFile(paths, "angular.json")) {
+        score += 3;
+        positives.push("Angular workspace detected");
+      }
+
+      if (paths.some((path) => path.endsWith(".component.ts"))) {
+        score += 2;
+        positives.push("Angular components detected");
+      }
+
+      if (paths.some((path) => path.endsWith(".service.ts"))) {
+        score += 2;
+        positives.push("Angular services detected");
+      }
+
+      if (paths.some((path) => path.endsWith(".module.ts"))) {
+        score += 2;
+        positives.push("Angular modules detected");
+      }
+
+      break;
+    }
+
+    case "svelte": {
+      if (hasFile(paths, "svelte.config.js") || hasFile(paths, "svelte.config.ts")) {
+        score += 3;
+        positives.push("Svelte config detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "src/routes")) {
+        score += 3;
+        positives.push("SvelteKit routes detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "src/lib")) {
+        score += 2;
+        positives.push("Svelte lib directory detected");
+      }
+
+      break;
+    }
+
+    case "node": {
+      if (hasFile(paths, "package.json")) {
+        score += 3;
+        positives.push("package.json detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "src")) {
+        score += 2;
+        positives.push("src directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "routes")) {
+        score += 1;
+        positives.push("Routes directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "services")) {
+        score += 1;
+        positives.push("Services directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "controllers")) {
+        score += 1;
+        positives.push("Controllers directory detected");
+      }
+
+      break;
+    }
+
+    case "python": {
+      if (hasFile(paths, "pyproject.toml")) {
         score += 3;
         positives.push("Modern pyproject.toml detected");
       }
 
-      if (hasSrc) {
+      if (hasDirectoryMatch(folderPaths, "src")) {
         score += 2;
         positives.push("src layout detected");
       }
 
-      if (hasTests) {
+      if (hasDirectoryMatch(folderPaths, "tests") || hasDirectoryMatch(folderPaths, "test")) {
         score += 2;
         positives.push("Tests directory detected");
       }
 
-      if (hasInitFiles) {
+      if (paths.some((path) => path.endsWith("__init__.py"))) {
         score += 2;
         positives.push("Python packages detected");
       }
@@ -735,23 +1166,151 @@ function getConventionScore(
       break;
     }
 
+    case "haskell": {
+      if (
+        hasFile(paths, "stack.yaml") ||
+        hasFile(paths, "cabal.project") ||
+        hasFile(paths, "package.yaml") ||
+        paths.some((path) => path.endsWith(".cabal"))
+      ) {
+        score += 4;
+        positives.push("Haskell project manifest detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "src")) {
+        score += 2;
+        positives.push("src directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "app")) {
+        score += 1;
+        positives.push("app directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "test") || hasDirectoryMatch(folderPaths, "tests")) {
+        score += 2;
+        positives.push("Haskell test directory detected");
+      }
+
+      break;
+    }
+
+    case "kotlin":
+    case "android": {
+      if (
+        hasFile(paths, "build.gradle") ||
+        hasFile(paths, "build.gradle.kts") ||
+        hasFile(paths, "settings.gradle") ||
+        hasFile(paths, "settings.gradle.kts")
+      ) {
+        score += 3;
+        positives.push("Gradle configuration detected");
+      }
+
+      if (
+        hasDirectoryMatch(folderPaths, "src/main/kotlin") ||
+        hasDirectoryMatch(folderPaths, "src/main/java")
+      ) {
+        score += 3;
+        positives.push("Kotlin/Java source root detected");
+      }
+
+      if (paths.some((path) => path.endsWith("androidmanifest.xml"))) {
+        score += 2;
+        positives.push("Android manifest detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "test") || hasDirectoryMatch(folderPaths, "androidTest")) {
+        score += 1;
+        positives.push("Test source set detected");
+      }
+
+      break;
+    }
+
+    case "swift":
+    case "ios": {
+      if (
+        hasFile(paths, "package.swift") ||
+        hasFile(paths, "podfile") ||
+        paths.some((path) => path.endsWith(".xcodeproj/project.pbxproj"))
+      ) {
+        score += 4;
+        positives.push("Swift/iOS project manifest detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "sources") || hasDirectoryMatch(folderPaths, "app")) {
+        score += 2;
+        positives.push("Swift source directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "tests")) {
+        score += 2;
+        positives.push("Tests directory detected");
+      }
+
+      break;
+    }
+
+    case "java": {
+      if (hasFile(paths, "pom.xml") || hasFile(paths, "build.gradle") || hasFile(paths, "build.gradle.kts")) {
+        score += 3;
+        positives.push("Java build file detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "src/main/java")) {
+        score += 3;
+        positives.push("Java source root detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "src/test")) {
+        score += 2;
+        positives.push("Java test root detected");
+      }
+
+      break;
+    }
+
+    case "dotnet": {
+      if (
+        paths.some((path) => path.endsWith(".sln")) ||
+        paths.some((path) => path.endsWith(".csproj")) ||
+        paths.some((path) => path.endsWith(".fsproj"))
+      ) {
+        score += 4;
+        positives.push(".NET solution/project file detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "src")) {
+        score += 2;
+        positives.push("src directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "tests") || hasDirectoryMatch(folderPaths, "test")) {
+        score += 2;
+        positives.push("Tests directory detected");
+      }
+
+      break;
+    }
+
     case "go": {
-      if (paths.includes("go.mod")) {
+      if (hasFile(paths, "go.mod")) {
         score += 3;
         positives.push("go.mod detected");
       }
 
-      if (folderPaths.includes("cmd")) {
+      if (hasDirectoryMatch(folderPaths, "cmd")) {
         score += 2;
         positives.push("cmd directory detected");
       }
 
-      if (folderPaths.includes("internal")) {
+      if (hasDirectoryMatch(folderPaths, "internal")) {
         score += 2;
         positives.push("internal directory detected");
       }
 
-      if (folderPaths.includes("pkg")) {
+      if (hasDirectoryMatch(folderPaths, "pkg")) {
         score += 1;
         positives.push("pkg directory detected");
       }
@@ -760,34 +1319,116 @@ function getConventionScore(
     }
 
     case "rust": {
-      if (paths.includes("cargo.toml")) {
+      if (hasFile(paths, "cargo.toml")) {
         score += 3;
         positives.push("Cargo.toml detected");
       }
 
-      if (folderPaths.includes("src")) {
+      if (hasDirectoryMatch(folderPaths, "src")) {
         score += 2;
         positives.push("src directory detected");
       }
 
-      if (paths.includes("src/main.rs") || paths.includes("src/lib.rs")) {
+      if (hasFile(paths, "main.rs") || hasExactPath(paths, "src/main.rs") || hasExactPath(paths, "src/lib.rs")) {
         score += 3;
         positives.push("Rust entry file detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "crates")) {
+        score += 1;
+        positives.push("crates directory detected");
+      }
+
+      break;
+    }
+
+    case "php": {
+      if (hasFile(paths, "composer.json")) {
+        score += 3;
+        positives.push("composer.json detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "src") || hasDirectoryMatch(folderPaths, "app")) {
+        score += 2;
+        positives.push("PHP source directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "routes")) {
+        score += 2;
+        positives.push("routes directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "tests")) {
+        score += 2;
+        positives.push("Tests directory detected");
+      }
+
+      break;
+    }
+
+    case "ruby": {
+      if (hasFile(paths, "gemfile")) {
+        score += 3;
+        positives.push("Gemfile detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "app") || hasDirectoryMatch(folderPaths, "lib")) {
+        score += 3;
+        positives.push("Ruby app/lib directory detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "spec") || hasDirectoryMatch(folderPaths, "test")) {
+        score += 2;
+        positives.push("Ruby test directory detected");
+      }
+
+      break;
+    }
+
+    case "polyglot": {
+      const dependencyManifests = [
+        "package.json",
+        "pyproject.toml",
+        "requirements.txt",
+        "cargo.toml",
+        "go.mod",
+        "pom.xml",
+        "build.gradle",
+        "composer.json",
+        "gemfile",
+        "stack.yaml",
+        "package.swift",
+      ].filter((manifest) => hasFile(paths, manifest));
+
+      if (dependencyManifests.length >= 2) {
+        score += 4;
+        positives.push("Multiple ecosystem manifests detected");
+      }
+
+      if (
+        hasDirectoryMatch(folderPaths, "packages") ||
+        hasDirectoryMatch(folderPaths, "apps") ||
+        hasDirectoryMatch(folderPaths, "crates")
+      ) {
+        score += 3;
+        positives.push("Monorepo-style folder structure detected");
+      }
+
+      if (hasDirectoryMatch(folderPaths, "tests") || hasDirectoryMatch(folderPaths, "test")) {
+        score += 2;
+        positives.push("Shared test directory detected");
       }
 
       break;
     }
 
     default: {
-      const hasSrc = folderPaths.includes("src");
-      const hasTests = folderPaths.includes("tests") || folderPaths.includes("test");
-
-      if (hasSrc) {
+      if (hasDirectoryMatch(folderPaths, "src")) {
         score += 4;
         positives.push("src directory detected");
       }
 
-      if (hasTests) {
+      if (hasDirectoryMatch(folderPaths, "tests") || hasDirectoryMatch(folderPaths, "test")) {
         score += 3;
         positives.push("tests directory detected");
       }

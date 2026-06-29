@@ -46,6 +46,9 @@ export type ProjectKind =
   | "svelte"
   | "node"
   | "python"
+  | "haskell"
+  | "kotlin"
+  | "swift"
   | "java"
   | "dotnet"
   | "go"
@@ -54,6 +57,7 @@ export type ProjectKind =
   | "ruby"
   | "android"
   | "ios"
+  | "polyglot"
   | "generic";
 
 export type ArchitectureMetric = {

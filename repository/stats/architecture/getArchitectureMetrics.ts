@@ -16,8 +16,13 @@ import {
     getRubyMetrics,
     getAndroidMetrics,
     getIosMetrics,
-    getGenericMetrics
+    getGenericMetrics,
+    getPolyglotMetrics,
+    getHaskellMetrics,
+    getKotlinMetrics,
+    getSwiftMetrics
 } from "./metrics/";
+
 
 export function getArchitectureMetrics(
     projectKind: ProjectKind,
@@ -31,11 +36,23 @@ export function getArchitectureMetrics(
         case "react":
             return getReactMetrics(files);
 
+        case "polyglot":
+            return getPolyglotMetrics(files, folders);
+
         case "vue":
             return getVueMetrics(files);
 
         case "angular":
             return getAngularMetrics(files);
+
+        case "haskell":
+            return getHaskellMetrics(files);
+
+        case "kotlin":
+            return getKotlinMetrics(files);
+
+        case "swift":
+            return getSwiftMetrics(files);
 
         case "svelte":
             return getSvelteMetrics(files);
