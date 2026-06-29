@@ -5,7 +5,6 @@ import {
   Database,
   FileText,
   FolderTree,
-  Gauge,
   Hammer,
   Image,
   Layers3,
