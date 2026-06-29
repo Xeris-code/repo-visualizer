@@ -1,7 +1,7 @@
 import { GraphNodeModel } from "@/graph/types";
 import { GithubFileDetails } from "@/repository/types";
 import { fetchGithubFileDetails } from "@/repository/api";
-import { capitalizeFirstLetter } from "@/shared/hooks";
+import { capitalizeFirstLetter } from "@/shared/utils";
 import { InsightsNodeFileTranslations } from "@/shared/types";
 import { Check, Copy, FileText } from "lucide-react";
 import { useEffect, useState } from "react";

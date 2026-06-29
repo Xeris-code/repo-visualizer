@@ -5,6 +5,7 @@ import {
     flip,
     FloatingPortal,
     offset,
+    Placement,
     shift,
     useDismiss,
     useFloating,
@@ -17,15 +18,16 @@ import {
 type TooltipProps = {
     label: string;
     children: ReactNode;
+    placement?: Placement;
 };
 
-export function Tooltip({ label, children }: TooltipProps) {
+export function Tooltip({ label, children, placement='top' }: TooltipProps) {
     const [open, setOpen] = useState(false);
 
     const { refs, floatingStyles, context } = useFloating({
         open,
         onOpenChange: setOpen,
-        placement: "top",
+        placement: placement,
         strategy: "fixed",
         whileElementsMounted: autoUpdate,
         middleware: [offset(8), flip(), shift({ padding: 8 })],

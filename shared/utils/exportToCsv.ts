@@ -1,8 +1,4 @@
-
-type CsvColumn<T> = {
-    header: string;
-    value: (item: T) => string | number;
-};
+import { CsvColumn } from "../types";
 
 export function exportToCsv<T>(
     filename: string,

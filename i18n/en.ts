@@ -35,22 +35,79 @@ export const en = {
                     label: "Scan again"
                 },
             },
-            items: {
-                file: {
+            metrics: {
+                files: {
                     label: "Files",
+                    description: "Total files in repository",
                 },
-                component: {
+                folders: {
+                    label: "Folders",
+                    description: "Total folders in repository",
+                },
+                source: {
+                    label: "Source Files",
+                    description: "Detected source code files",
+                },
+                components: {
                     label: "Components",
+                    description: "Detected UI or framework components",
                 },
-                route: {
+                routes: {
+                    label: "Routes",
+                    description: "Detected application routes",
+                },
+                api: {
                     label: "API Routes",
+                    description: "Detected API route handlers",
                 },
-                library: {
-                    label: "Libraries",
+                controllers: {
+                    label: "Controllers",
+                    description: "Detected controller files",
+                },
+                services: {
+                    label: "Services",
+                    description: "Detected service layer files",
+                },
+                models: {
+                    label: "Models",
+                    description: "Detected model, entity or DTO files",
+                },
+                modules: {
+                    label: "Modules",
+                    description: "Detected source modules",
+                },
+                packages: {
+                    label: "Packages",
+                    description: "Detected package or project folders",
+                },
+                dependencies: {
+                    label: "Dependencies",
+                    description: "Detected dependency configuration files",
+                },
+                tests: {
+                    label: "Tests",
+                    description: "Detected test files",
+                },
+                config: {
+                    label: "Config Files",
+                    description: "Detected configuration files",
+                },
+                assets: {
+                    label: "Assets",
+                    description: "Detected static or visual assets",
+                },
+                build: {
+                    label: "Build Files",
+                    description: "Detected build-related files",
                 },
                 score: {
                     label: "Architecture Score",
-                }
+                    description: "Estimated architecture health score",
+                },
+                generic: {
+                    label: "Items",
+                    description: "Detected repository items",
+                },
             },
         },
 
@@ -87,6 +144,7 @@ export const en = {
                 dir: "Largest directory",
                 size: "Size",
                 percentage: "Percentage",
+                project: "Project Kind"
             },
             node: {
                 title: "Node Details",
@@ -109,7 +167,16 @@ export const en = {
                     folders: "Folders",
                     rootFolders: "Total Folders",
                     children: "Children",
-                    childrenList: "View all"
+                    childrenList: "View all",
+                    rootNote: "This is the root folder of the repository.",
+                    modalTranslationsList: {
+                        title: "blabla",
+                        badge: "children",
+                        description: "List of all children folders and files",
+                        search: "Search folders and files...",
+                        name: "Name",
+                        type: "Type",
+                    }
                 }
             },
         },

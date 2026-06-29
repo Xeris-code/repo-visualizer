@@ -1,9 +1,10 @@
 import { getTopFiles } from "@/repository/analysis";
 import { StatsFilesTranslations } from "@/shared/types";
 import { File } from "lucide-react";
-import { useState } from "react";
-import { FileTypesModal } from "./FileTypeModal";
+import { FileTypesModal } from "../modals/";
 import { FileStats } from "@/repository/types";
+import { useSharedUserActions } from "@/shared/hooks";
+import { ViewAllButton } from "@/shared/ui/buttons";
 
 type FileTypesCardProps = {
     files: FileStats;
@@ -15,7 +16,7 @@ export function FileTypesCard ({
 }: FileTypesCardProps) {
 
     const displayFiles = getTopFiles(files)
-    const [isModalsOpen, setIsModalOpen] = useState(false);
+    const {isModalOpen, setIsModalOpen} = useSharedUserActions()
 
     return (
         <div className="flex flex-col rounded border border-[#1A2550] bg-[#081020] px-5 py-3">
@@ -23,13 +24,11 @@ export function FileTypesCard ({
                 <span className="text-sm font-semibold text-white">
                     {translation.title}
                 </span>
-                <button
-                    type="button"
+                <ViewAllButton
+                    label={translation.list}
+                    count={files.length}
                     onClick={() => setIsModalOpen(true)}
-                    className="cursor-pointer select-none text-xs text-[#8B5CF6] transition hover:text-[#A78BFA] hover:underline"
-                >
-                    {`${translation.list} (${files.length})`}
-                </button>
+                />
             </div>
             <div className="flex flex-col mt-4 gap-2">
                 {displayFiles.map((file, index) => 
@@ -45,7 +44,7 @@ export function FileTypesCard ({
                     </div> 
                 )}
             </div>
-            {isModalsOpen && <FileTypesModal
+            {isModalOpen && <FileTypesModal
                 items={files}
                 translations={translation.listTranslations}
                 onClose={() => setIsModalOpen(false)}

@@ -37,6 +37,7 @@ export type InsightsNoNodeTranslations = TranslationSchema["ui"]["insights"]["no
 export type InsightsNodeTranslations = TranslationSchema["ui"]["insights"]["node"]
 export type InsightsNodeFileTranslations = TranslationSchema["ui"]["insights"]["node"]["file"]
 export type InsightsNodeFolderTranslations = TranslationSchema["ui"]["insights"]["node"]["folder"]
+export type InsightsNodeFolderModalTranslations = TranslationSchema["ui"]["insights"]["node"]["folder"]["modalTranslationsList"]
 
 export type GraphTooltipTranslations = TranslationSchema["ui"]["graph"]["tooltip"]
 

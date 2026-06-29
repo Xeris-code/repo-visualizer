@@ -1,0 +1,34 @@
+import { GithubTreeItem, ArchitectureMetric } from "@/repository/types";
+
+export function getVueMetrics(files: GithubTreeItem[]): ArchitectureMetric[] {
+  const paths = files.map((file) => file.path.toLowerCase());
+
+  const components = paths.filter((path) => path.endsWith(".vue"));
+  const views = paths.filter((path) => path.includes("/views/") || path.includes("/pages/"));
+  const stores = paths.filter((path) => path.includes("/store/") || path.includes("/stores/"));
+  const routes = paths.filter((path) => path.includes("router.") || path.includes("/router/"));
+
+  const tests = paths.filter(
+    (path) =>
+      path.includes("/tests/") ||
+      path.includes("__tests__/") ||
+      path.includes(".test.") ||
+      path.includes(".spec.")
+  );
+
+  const dependencies = paths.filter((path) =>
+    ["package.json", "pnpm-lock.yaml", "package-lock.json", "yarn.lock"].includes(
+      path
+    )
+  );
+
+  return [
+    { id: "files", type: "files", value: files.length },
+    { id: "components", type: "components", value: components.length },
+    { id: "views", type: "routes", value: views.length },
+    { id: "router", type: "routes", value: routes.length },
+    { id: "stores", type: "modules", value: stores.length },
+    { id: "tests", type: "tests", value: tests.length },
+    { id: "dependencies", type: "dependencies", value: dependencies.length },
+  ];
+}

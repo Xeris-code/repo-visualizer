@@ -4,7 +4,7 @@ type OverviewCardProps = {
     Icon: LucideIcon;
     bgColor: string;
     textColor: string;
-    count: number;
+    count: number | string;
     label: string;
 }
 

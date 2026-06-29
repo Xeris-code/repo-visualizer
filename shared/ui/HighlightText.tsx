@@ -1,16 +1,16 @@
 export function HighlightText({
     text,
-    search,
+    highlight,
 }: {
     text: string;
-    search: string;
+    highlight: string;
 }) {
-    if (!search.trim()) {
+    if (!highlight.trim()) {
         return text;
     }
 
     const lowerText = text.toLowerCase();
-    const lowerSearch = search.toLowerCase();
+    const lowerSearch = highlight.toLowerCase();
 
     const matchIndex = lowerText.indexOf(lowerSearch);
 
@@ -19,8 +19,8 @@ export function HighlightText({
     }
 
     const before = text.slice(0, matchIndex);
-    const match = text.slice(matchIndex, matchIndex + search.length);
-    const after = text.slice(matchIndex + search.length);
+    const match = text.slice(matchIndex, matchIndex + highlight.length);
+    const after = text.slice(matchIndex + highlight.length);
 
     return (
         <>

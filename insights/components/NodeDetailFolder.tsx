@@ -1,9 +1,11 @@
 import { GraphNodeModel } from "@/graph/types";
-import { capitalizeFirstLetter } from "@/shared/hooks";
+import { useSharedUserActions } from "@/shared/hooks";
 import { InsightsNodeFolderTranslations } from "@/shared/types";
 import { Tooltip } from "@/shared/ui";
 import { Check, Copy, FolderClosed } from "lucide-react";
-import { useState } from "react";
+import { capitalizeFirstLetter } from "@/shared/utils";
+import { NodeFolderChildrenModal } from "./NodeFolderChildrenModal";
+import { ViewAllButton } from "@/shared/ui/buttons";
 
 type NodeDetailFolderProps = {
     title: string;
@@ -13,16 +15,11 @@ type NodeDetailFolderProps = {
 
 export function NodeDetailFolder({title, node, translation}: NodeDetailFolderProps) {
 
-    const [copied, setCopied] = useState(false);
-
-    async function handleCopy() {
-        await navigator.clipboard.writeText(node.metadata?.path ? node.metadata.path : "");
-        setCopied(true);
-
-        setTimeout(() => {
-            setCopied(false);
-        }, 1500);
-    }
+    const {
+        copied,
+        isModalOpen, setIsModalOpen,
+        handleCopy
+    } = useSharedUserActions()
 
     return (
         <div className="flex flex-col gap-4 rounded border card px-3 py-2 ">
@@ -33,7 +30,7 @@ export function NodeDetailFolder({title, node, translation}: NodeDetailFolderPro
                 </div>
                 {node.id === "root" ? 
                     <p className="text-xs text-[#7F89A7]">
-                        This is the root folder of the repository.
+                        {translation.rootNote}
                     </p>
                     : <div className="flex flex-col">
                         <span className="text-sm">{node.title}</span>
@@ -46,7 +43,7 @@ export function NodeDetailFolder({title, node, translation}: NodeDetailFolderPro
                     <span className="w-3/5 select-none text-xs leading-relaxed text-[#7F89A7]">{translation.path}</span>
                     <div className="w-full grid grid-cols-[1fr_20px] items-center justify-between gap-4">
                         <span className="text-xs truncate">{node.metadata?.path}</span>
-                        <button type="button" onClick={handleCopy} className="w-6.25 cursor-pointer hover:text-[#A78BFA]">
+                        <button type="button" onClick={() => handleCopy(node.metadata?.path ? node.metadata.path : "")} className="w-6.25 cursor-pointer hover:text-[#A78BFA]">
                             <Tooltip label={copied ? "Copied!" : "Copy"}>
                                 {copied ? <Check size={15}/> : <Copy size={15}/>}
                             </Tooltip>
@@ -74,18 +71,24 @@ export function NodeDetailFolder({title, node, translation}: NodeDetailFolderPro
                     <div className="flex flex-col w-full">
                         {node.metadata?.children?.slice(0, 5).map((child, index) => <span key={index} className="text-xs">{child}</span>)}
                         {(node.metadata?.children && node.metadata.children.length > 5) && 
-                            <div className="">
-                                <button
-                                    type="button"
-                                    className="cursor-pointer text-xs text-[#8B5CF6] transition hover:text-[#A78BFA] hover:underline"
-                                >
-                                    {`${translation.childrenList} (${node.metadata.children.length})`}
-                                </button>
+                            <div>
+                                <ViewAllButton
+                                    label={translation.childrenList}
+                                    count={node.metadata.children.length}
+                                    onClick={() => setIsModalOpen(true)}
+                                />
                             </div>
                         }
                         
                     </div>
                 </div>
+                {isModalOpen && node.metadata?.children && <NodeFolderChildrenModal
+                    name={node.title}
+                    items={node.metadata.children}
+                    translations={translation.modalTranslationsList}
+                    onClose={() => setIsModalOpen(false)}
+                />
+                }
             </div>
         </div>
     );

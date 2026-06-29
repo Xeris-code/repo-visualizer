@@ -12,6 +12,10 @@ export function RepositorySummaryInsights({translations, repo}: RepositorySummar
     <div className="flex flex-col rounded border card">
       <span className="px-3 py-2 text-sm font-semibold text-white">{translations.title}</span>
       <div className="grid grid-cols-2 border-t card">
+        <div className="flex flex-col col-span-2 text-center border-b card py-2">
+            <span className="text-sm">{repo.projectKind}</span>
+            <span className="text-xs leading-relaxed text-[#7F89A7]">{translations.project}</span>
+        </div>
         <div className="grid grid-cols-1">
           <div className="flex flex-col items-center border-b card py-2">
             <span className="text-sm">{repo.name}</span>

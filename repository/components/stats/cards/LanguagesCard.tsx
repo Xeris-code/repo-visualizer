@@ -1,24 +1,25 @@
 import { buildConicGradient, getTopLanguages } from "@/repository/hooks";
 import { LanguageStats } from "@/repository/types";
 import { StatsLanguagesTranslations } from "@/shared/types";
-import { useState } from "react";
-import { LanguagesModal } from "./LanguagesModal";
+import { LanguagesModal } from "../modals/"
+import { useSharedUserActions } from "@/shared/hooks";
+import { ViewAllButton } from "@/shared/ui/buttons";
 
 type LanguagesCardProps = {
-    totalFiles: number,
-    languages: LanguageStats;
-    translation: StatsLanguagesTranslations;
+  totalFiles: number,
+  languages: LanguageStats;
+  translation: StatsLanguagesTranslations;
 }
 export function LanguagesCard({
-    totalFiles,
-    languages,
-    translation,
+  totalFiles,
+  languages,
+  translation,
 }: LanguagesCardProps) {
 
   const displayLanguages = getTopLanguages(languages);
   const gradient = buildConicGradient(displayLanguages);
 
-  const [isModalsOpen, setIsModalOpen] = useState(false);
+  const {isModalOpen, setIsModalOpen} = useSharedUserActions()
 
   return (
     <div className="flex flex-col rounded border border-[#1A2550] bg-[#081020] px-5 py-3">
@@ -27,13 +28,11 @@ export function LanguagesCard({
           {translation.title}
         </span>
 
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(true)}
-          className="cursor-pointer text-xs text-[#8B5CF6] transition hover:text-[#A78BFA] hover:underline"
-        >
-          {`${translation.list} (${languages.length})`}
-        </button>
+        <ViewAllButton
+            label={translation.list}
+            count={languages.length}
+            onClick={() => setIsModalOpen(true)}
+        />
       </div>
 
       <div className="mt-4 flex items-center gap-5">
@@ -72,7 +71,7 @@ export function LanguagesCard({
           ))}
         </div>
       </div>
-      {isModalsOpen && <LanguagesModal
+      {isModalOpen && <LanguagesModal
         items={languages}
         translations={translation.listTranslations}  
         onClose={() => setIsModalOpen(false)}

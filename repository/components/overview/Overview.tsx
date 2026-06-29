@@ -1,8 +1,10 @@
 
-import { ArchitectureScoreCard } from "./ArchitectureScoreCard";
-import { Component, Download, Route, FileText, RefreshCw, Share, Library } from "lucide-react";
+import { Download, RefreshCw, Share} from "lucide-react";
 import { OverviewCard } from "./OverviewCard";
 import { useAppState } from "@/app-shell/context";
+import { getMetricVisualConfig } from "@/repository/types";
+import { Tooltip } from "@/shared/ui";
+import { ArchitectureScoreCard } from "./ArchitectureScoreCard";
 
 
 export function Overview() {
@@ -14,6 +16,8 @@ export function Overview() {
     if (!stats) {
         return <div/>
     }
+
+    const gridTemplateColumns = `repeat(${stats.architectureMetrics.length + 1}, minmax(0, 1fr))`;
 
     return (
         <div className="flex flex-col p-3 gap-2 select-none">
@@ -49,39 +53,28 @@ export function Overview() {
                     </button>
                 </div>
             </div>
-            <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr] w-full gap-x-3">
-                <OverviewCard
-                    Icon={FileText}
-                    bgColor="bg-blue-500/10"
-                    textColor="text-blue-400"
-                    count={stats.totalFiles}
-                    label={t.ui.overview.items.file.label}
-                />
-                <OverviewCard
-                    Icon={Component}
-                    bgColor="bg-fuchsia-500/10"
-                    textColor="text-fuchsia-400"
-                    count={stats.totalComponents}
-                    label={t.ui.overview.items.component.label}
-                />
-                <OverviewCard
-                    Icon={Route}
-                    bgColor="bg-emerald-500/10"
-                    textColor="text-emerald-400"
-                    count={stats.totalRoutes}
-                    label={t.ui.overview.items.route.label}
-                />
-                <OverviewCard
-                    Icon={Library}
-                    bgColor="bg-amber-500/10"
-                    textColor="text-amber-400"
-                    count={stats.totalLibraries}
-                    label={t.ui.overview.items.library.label}
-                />
-                <ArchitectureScoreCard
-                    value={stats.architectureScore}
-                    label={t.ui.overview.items.score.label}
-                />
+            <div style={{ gridTemplateColumns }} className="grid gap-x-2">
+                {stats.architectureMetrics.map((metric) => {
+                    const config = getMetricVisualConfig(metric.type);
+
+                    return (
+                        <Tooltip key={metric.id} placement="bottom" label={t.ui.overview.metrics[metric.type].description}>
+                            <OverviewCard
+                                Icon={config.Icon}
+                                bgColor={config.bgColor}
+                                textColor={config.textColor}
+                                count={Number(metric.value)}
+                                label={t.ui.overview.metrics[metric.type].label}
+                            />
+                        </Tooltip>
+                    );})
+                }
+                <Tooltip placement="bottom" label={t.ui.overview.metrics.score.description}>
+                    <ArchitectureScoreCard
+                        value={stats.architectureScore}
+                        label={t.ui.overview.metrics.score.label}
+                    />
+                </Tooltip>
             </div>
         </div>
     );

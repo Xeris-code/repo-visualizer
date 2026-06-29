@@ -16,7 +16,7 @@ export function ArchitectureScoreCard({
   const strokeDashoffset = circumference * (1 - percentage);
 
   return (
-    <div className="flex items-center gap-3 p-3 rounded-lg border-[#1F2A44] border bg-[#111827]">
+    <div className="flex items-center gap-3 p-3.5 rounded-lg border-[#1F2A44] border bg-[#111827]">
         <div className="flex items-center gap-3">
         <div className="relative h-9 w-9">
             <svg viewBox="0 0 36 36" className="h-9 w-9 -rotate-90">

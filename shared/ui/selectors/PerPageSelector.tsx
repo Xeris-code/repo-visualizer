@@ -59,7 +59,7 @@ export function PerPageSelector({
                             <button
                                 key={index}
                                 type="button"
-                                onClick={() => onClick(item)}
+                                onClick={() => {onClick(item); setClicked(false)}}
                                 className="cursor-pointer text-[#F8FAFC] hover:text-[#A78BFA] active:scale-[0.90]"
                             >
                                 <span>{item}</span>
