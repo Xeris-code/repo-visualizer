@@ -25,10 +25,10 @@ The goal is to make large codebases easier to understand at a glance.
 
 ![Repo Visualizer Logo](./public/graphics/logo.png)
 
-Current status
-
 Navigate your codebase structure!
+<div classname="items-center">
 ![alt text]({BF4ED6F1-AA69-41FD-9C70-424FEEAEEEEF}.png)
+</div>
 
 Check architecture score and issues!
 ![alt text]({F9628F58-635E-4BDB-AFCE-DF4F43AEF711}.png)
