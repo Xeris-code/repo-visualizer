@@ -23,17 +23,26 @@ Instead of browsing a repository only through folders and files, the application
 
 The goal is to make large codebases easier to understand at a glance.
 
-![Repo Visualizer Logo](./public/graphics/logo.png)
+<p align="center">
+  <img src="./public/graphics/logo.png" alt="Repo Visualizer Logo" width="180" />
+</p>
 
 Navigate your codebase structure!
-<div classname="items-center">
+<p align="center">
+  <img src="./{BF4ED6F1-AA69-41FD-9C70-424FEEAEEEEF}" alt="Repo Visualizer Logo" width="180" />
+</p>
 ![alt text]({BF4ED6F1-AA69-41FD-9C70-424FEEAEEEEF}.png)
-</div>
 
 Check architecture score and issues!
+<p align="center">
+  <img src="./{F9628F58-635E-4BDB-AFCE-DF4F43AEF711}.png" alt="Repo Visualizer Logo" width="180" />
+</p>
 ![alt text]({F9628F58-635E-4BDB-AFCE-DF4F43AEF711}.png)
 
 Search directories!
+<p align="center">
+  <img src="./{752F8950-42F5-4EF3-A342-01168021BF95}.png" alt="Repo Visualizer Logo" width="180" />
+</p>
 ![alt text]({752F8950-42F5-4EF3-A342-01168021BF95}.png)
 
 ---
